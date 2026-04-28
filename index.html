@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Inbox Zero — Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+          sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        background: #fff;
+        color: #1a1a1a;
+      }
+
+      /* Layout */
+      .layout {
+        display: grid;
+        grid-template-columns: 400px auto;
+        grid-template-rows: 68px auto;
+        height: 100vh;
+      }
+
+      /* Header */
+      .header {
+        grid-column: 1/-1;
+        background: #000;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        font-size: 15px;
+      }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 16px;
+      }
+      .header-logo svg {
+        width: 22px;
+        height: 22px;
+      }
+      .header-divider {
+        width: 1px;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .header-nav {
+        display: flex;
+        gap: 20px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .header-nav span {
+        cursor: pointer;
+        padding: 4px 0;
+      }
+      .header-nav span:hover,
+      .header-nav span.active {
+        color: #fff;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 13px;
+      }
+      .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #555;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 600;
+      }
+      .badge {
+        background: #555;
+        color: #fff;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background: #f5f5f5;
+        padding: 32px 32px 24px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .sidebar-top {
+      }
+      .sidebar-count {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 4px;
+      }
+      .sidebar-unread {
+        font-size: 42px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 24px;
+      }
+      .sidebar-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 32px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: 0.15s;
+        text-decoration: none;
+      }
+      .btn-primary {
+        background: #0066ff;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #0052cc;
+      }
+      .btn-secondary {
+        background: transparent;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+      .btn-secondary:hover {
+        background: #eee;
+      }
+      .search-box {
+        position: relative;
+        margin-top: 8px;
+      }
+      .search-box input {
+        width: 100%;
+        padding: 10px 14px 10px 36px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        font-family: inherit;
+      }
+      .search-box input:focus {
+        border-color: #0066ff;
+        box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.1);
+      }
+      .search-box .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+        font-size: 14px;
+      }
+      .sidebar-bottom {
+        margin-top: auto;
+        padding-top: 16px;
+      }
+      .sidebar-link {
+        font-size: 13px;
+        color: #333;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+      }
+      .sidebar-link:hover {
+        color: #0066ff;
+      }
+
+      /* Content */
+      .content {
+        padding: 32px 40px;
+        overflow-y: auto;
+      }
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .content-header h2 {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .content-controls {
+        display: flex;
+        gap: 8px;
+      }
+      .content-controls button {
+        padding: 6px 14px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: 0.15s;
+      }
+      .content-controls button:hover {
+        background: #f5f5f5;
+      }
+      .content-controls button.active {
+        background: #0066ff;
+        color: #fff;
+        border-color: #0066ff;
+      }
+
+      /* Thread list */
+      .thread-list {
+        display: flex;
+        flex-direction: column;
+      }
+      .thread {
+        display: grid;
+        grid-template-columns: 36px 1fr auto;
+        gap: 12px;
+        padding: 16px 20px;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: 0.15s;
+        align-items: start;
+      }
+      .thread:hover {
+        border-color: #ddd;
+        background: #fafafa;
+      }
+      .thread.unread {
+        border-left: 3px solid #0066ff;
+        background: #f8fbff;
+      }
+      .thread.unread:hover {
+        background: #f0f5ff;
+      }
+      .thread-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .thread-body {
+        min-width: 0;
+      }
+      .thread-from {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      .thread.unread .thread-from {
+        font-weight: 700;
+      }
+      .thread-subject {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 2px;
+      }
+      .thread-snippet {
+        font-size: 13px;
+        color: #777;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
+      }
+      .thread-meta {
+        text-align: right;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+      }
+      .thread-date {
+        font-size: 12px;
+        color: #999;
+        white-space: nowrap;
+      }
+      .thread-attach {
+        font-size: 14px;
+        color: #999;
+      }
+      .thread-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #0066ff;
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+      }
+      .pagination button {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.15s;
+      }
+      .pagination button:hover {
+        background: #f5f5f5;
+      }
+      .pagination button:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      .pagination-label {
+        font-size: 13px;
+        color: #666;
+      }
+
+      /* Loading/empty states */
+      .loading {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+        font-size: 14px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+      }
+      .empty-state .icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+      }
+      .empty-state h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .empty-state p {
+        font-size: 14px;
+        color: #666;
+      }
+
+      /* Thread detail modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 12px;
+        width: 680px;
+        max-width: 90vw;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid #eee;
+      }
+      .modal-header h3 {
+        font-size: 16px;
+        font-weight: 600;
+        flex: 1;
+        margin-right: 16px;
+      }
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #999;
+        padding: 4px;
+      }
+      .modal-close:hover {
+        color: #333;
+      }
+      .modal-body {
+        padding: 24px;
+      }
+      .modal-from {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .modal-email {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 16px;
+      }
+      .modal-body-text {
+        font-size: 14px;
+        line-height: 1.7;
+        color: #333;
+        white-space: pre-wrap;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+      }
+      .modal-actions .btn {
+        font-size: 13px;
+        padding: 8px 16px;
+      }
+
+      /* AI analysis badge */
+      .ai-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #f0f5ff;
+        color: #0066ff;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-left: 8px;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      @media (max-width: 800px) {
+        .layout {
+          grid-template-columns: 1fr;
+          grid-template-rows: 60px auto;
+        }
+        .sidebar {
+          display: none;
+        }
+        .content {
+          padding: 16px;
+        }
+        .thread {
+          grid-template-columns: 32px 1fr auto;
+          padding: 12px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <div class="header-logo">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="m22 7-8.97 5.58a2 2 0 0 1-2.06 0L2 7" />
+            </svg>
+            Inbox Zero
+          </div>
+        </div>
+        <div class="header-right">
+          <span>demo@inboxzero.app</span>
+          <span class="badge">Demo</span>
+          <div class="avatar">D</div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-top">
+          <div class="sidebar-count">unread emails</div>
+          <div class="sidebar-unread" id="unreadCount">42</div>
+          <div class="sidebar-actions">
+            <button class="btn btn-primary" onclick="refreshInbox()">
+              ↻ Refresh
+            </button>
+          </div>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              id="searchInput"
+              placeholder="Search inbox..."
+              oninput="debouncedSearch()"
+            />
+          </div>
+        </div>
+        <div class="sidebar-bottom">
+          <a class="sidebar-link" href="#" onclick="return false">⚙ Settings</a>
+          <a class="sidebar-link" href="#" onclick="return false"
+            >📊 AI Analysis</a
+          >
+          <a class="sidebar-link" href="#" onclick="return false">📁 Archive</a>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content" id="content">
+        <div class="content-header">
+          <h2>Inbox</h2>
+          <div class="content-controls">
+            <button class="active" onclick="setFilter('all')">All</button>
+            <button onclick="setFilter('unread')">Unread</button>
+            <button onclick="setFilter('flagged')">Flagged</button>
+          </div>
+        </div>
+        <div id="threadContainer">
+          <div class="loading">Loading emails...</div>
+        </div>
+        <div class="pagination" id="pagination">
+          <button id="prevBtn" onclick="prevPage()">← Previous</button>
+          <span class="pagination-label" id="pageLabel">Page 1</span>
+          <button id="nextBtn" onclick="nextPage()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thread detail modal -->
+    <div id="modalContainer" style="display:none"></div>
+
+    <script>
+      // ─── Mock Data ─────────────────────────────────────────────
+      const SENDERS = [
+        "Stripe",
+        "Notion",
+        "Slack",
+        "Linear",
+        "Vercel",
+        "GitHub",
+        "Figma",
+        "Calendly",
+        "Loom",
+        "Intercom",
+        "Superhuman",
+        "Arc Browser",
+        "David (Personal)",
+        "Product Hunt",
+        "Raycast",
+        "Linear",
+        "Posthog",
+        "Kate Chen",
+        "Marcus Webb",
+        "Jenny Tran",
+        "Amit Patel",
+        "Sarah Kim",
+        "Tom Adams",
+        "Rachel Lee",
+        "James O'Brien",
+        "Nina Eriksson",
+        "Liam Scott",
+        "Zoe Williams",
+        "Elena Popescu",
+        "Hugo Chang",
+        "Priya Sharma",
+        "Miguel Torres"
+      ];
+
+      const SUBJECTS = [
+        "Your weekly invoice is ready",
+        "New team member added to workspace",
+        "Meeting reminder: Product sync @ 3pm",
+        "Feature request: Dark mode export",
+        "Your deployment succeeded — staging",
+        "Pull request #247: Fix auth race condition",
+        'Comments on "Q2 Growth Strategy"',
+        "Invitation: Design review tomorrow",
+        "New subscriber — 5 free users this week",
+        "A/B test results are in",
+        "Security alert: New login from Dublin",
+        "Your trial is expiring soon",
+        "Sprint retrospective notes",
+        "Update on the onboarding flow redesign",
+        "Question about the API rate limits",
+        "React Native bundle size optimization",
+        "Draft: Blog post on AI-assisted workflows",
+        "Screenshare feedback attached",
+        "Budget approval needed for Q3 tools",
+        "New comment on your pull request",
+        "Can you review the pricing page?",
+        "Weekly analytics digest",
+        "Reminder: 1:1 tomorrow at 10",
+        "Changelog: v2.4.1 released",
+        "Early access invite — new feature",
+        "Customer interview transcript attached",
+        "Performance report — last 30 days",
+        "Integration test results",
+        "New job applicant for Senior PM role",
+        "Your NPS score dropped 12 points",
+        "Monthly OKR review — please update",
+        "Thoughts on the partnership deck?",
+        "Docs site redesign — first mockups",
+        "Launch checklist v3 — your input needed"
+      ];
+
+      const SNIPPETS = [
+        "Hi, just following up on the invoice for last month. The total came to $...",
+        "I wanted to loop you in on the new onboarding flow we're testing. Early numbers look...",
+        "Quick heads up — the API will be down for maintenance Sunday 2-4am. No breaking...",
+        "We noticed your team hasn't used the collaboration feature yet. Here's a quick...",
+        "The design review is scheduled for Thursday. Please add your comments before then...",
+        "Your monthly report is ready. Highlights: 23% increase in active users, 12% decrease...",
+        "Can you take a look at the pricing page before we push it live? There's a section...",
+        "I've attached the interview transcript. Key themes: speed, reliability, and onboarding...",
+        "The board meeting has been moved to next Tuesday at 2pm. Same Zoom link...",
+        "We've updated our privacy policy to comply with new regulations. Please review...",
+        "Customer feedback from this week: 3 feature requests, 2 bug reports, 1 praise...",
+        "The integration tests are failing on the auth flow. Can someone investigate?"
+      ];
+
+      const AI_INSIGHTS = [
+        "Needs reply — invoice due in 3 days",
+        "Action: Review PR comments",
+        "Meeting prep: agenda attached",
+        "Follow-up needed (2 replies sent)",
+        "Auto-archivable (newsletter)",
+        "Low priority — can batch process",
+        "High urgency: billing issue",
+        "Snoozed once, needs decision",
+        "Auto-reply sent",
+        "Flagged for weekly review"
+      ];
+
+      // Generate realistic mock threads
+      function generateThreads(count) {
+        const threads = [];
+        for (let i = 0; i < count; i++) {
+          const fromName = SENDERS[i % SENDERS.length];
+          const isUnread = Math.random() < 0.35;
+          const daysAgo = Math.floor(Math.random() * 14);
+          const date = new Date(
+            Date.now() -
+              daysAgo * 86400000 -
+              Math.floor(Math.random() * 86400000)
+          );
+
+          threads.push({
+            id: `thread-${i}`,
+            from: {
+              name: fromName,
+              email:
+                fromName.toLowerCase().replace(/[^a-z]/g, "") + "@example.com"
+            },
+            subject: SUBJECTS[i % SUBJECTS.length],
+            snippet: SNIPPETS[i % SNIPPETS.length],
+            date: date.getTime(),
+            unread: isUnread,
+            flagged: Math.random() < 0.1,
+            hasAttachments: Math.random() < 0.15,
+            aiLabel:
+              Math.random() < 0.4
+                ? AI_INSIGHTS[Math.floor(Math.random() * AI_INSIGHTS.length)]
+                : null,
+            avatarColor: [
+              "#0066ff",
+              "#7c3aed",
+              "#db2777",
+              "#dc2626",
+              "#ea580c",
+              "#ca8a04",
+              "#16a34a",
+              "#0891b2"
+            ][Math.floor(Math.random() * 8)]
+          });
+        }
+        return threads;
+      }
+
+      const ALL_THREADS = generateThreads(85);
+
+      // ─── State ──────────────────────────────────────────────────
+      let currentPage = 1;
+      let currentFilter = "all";
+      let currentSearch = "";
+      const PER_PAGE = 12;
+      let debounceTimer = null;
+
+      function getFiltered() {
+        let items = [...ALL_THREADS];
+        if (currentFilter === "unread") items = items.filter(t => t.unread);
+        if (currentFilter === "flagged") items = items.filter(t => t.flagged);
+        if (currentSearch) {
+          const q = currentSearch.toLowerCase();
+          items = items.filter(
+            t =>
+              t.from.name.toLowerCase().includes(q) ||
+              t.subject.toLowerCase().includes(q) ||
+              t.snippet.toLowerCase().includes(q)
+          );
+        }
+        return items;
+      }
+
+      function render() {
+        const items = getFiltered();
+        const total = items.length;
+        const totalPages = Math.ceil(total / PER_PAGE) || 1;
+
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const start = (currentPage - 1) * PER_PAGE;
+        const pageItems = items.slice(start, start + PER_PAGE);
+
+        const container = document.getElementById("threadContainer");
+        const unreadCount = items.filter(t => t.unread).length;
+        document.getElementById("unreadCount").textContent = unreadCount;
+
+        if (pageItems.length === 0) {
+          container.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🎉</div>
+        <h3>Inbox Zero achieved!</h3>
+        <p>${
+          currentSearch
+            ? 'No results for "' + currentSearch + '"'
+            : "All caught up. Time to enjoy the quiet."
+        }</p>
+      </div>`;
+          document.getElementById("pagination").style.display = "none";
+          return;
+        }
+
+        document.getElementById("pagination").style.display = "flex";
+
+        container.innerHTML =
+          '<div class="thread-list">' +
+          pageItems
+            .map(t => {
+              const initials = t.from.name
+                .split(" ")
+                .map(w => w[0])
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+              const isRecent = Date.now() - t.date < 86400000;
+              const dateStr = isRecent
+                ? new Date(t.date).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  })
+                : new Date(t.date).toLocaleDateString([], {
+                    month: "short",
+                    day: "numeric"
+                  });
+
+              return `<div class="thread ${
+                t.unread ? "unread" : ""
+              }" onclick="openThread(${t.id.replace("thread-", "")})">
+      <div class="thread-avatar" style="background:${
+        t.avatarColor
+      }">${initials}</div>
+      <div class="thread-body">
+        <div class="thread-from">${t.from.name}${
+                t.aiLabel ? `<span class="ai-badge">🤖 ${t.aiLabel}</span>` : ""
+              }</div>
+        <div class="thread-subject">${t.subject}</div>
+        <div class="thread-snippet">${t.snippet}</div>
+      </div>
+      <div class="thread-meta">
+        <div class="thread-date">${dateStr}</div>
+        ${t.hasAttachments ? '<div class="thread-attach">📎</div>' : ""}
+        ${t.unread ? '<div class="thread-dot"></div>' : ""}
+        ${t.flagged ? '<div style="color:#ea580c;font-size:14px">★</div>' : ""}
+      </div>
+    </div>`;
+            })
+            .join("") +
+          "</div>";
+
+        document.getElementById(
+          "pageLabel"
+        ).textContent = `Page ${currentPage} of ${totalPages} (${total} emails)`;
+        document.getElementById("prevBtn").disabled = currentPage <= 1;
+        document.getElementById("nextBtn").disabled = currentPage >= totalPages;
+
+        // Update filter buttons
+        document.querySelectorAll(".content-controls button").forEach(b => {
+          b.classList.toggle(
+            "active",
+            b.textContent.toLowerCase() === currentFilter ||
+              (currentFilter === "all" && b.textContent === "All") ||
+              (currentFilter === "unread" && b.textContent === "Unread") ||
+              (currentFilter === "flagged" && b.textContent === "Flagged")
+          );
+        });
+      }
+
+      function setFilter(f) {
+        currentFilter = f;
+        currentPage = 1;
+        render();
+      }
+      function prevPage() {
+        if (currentPage > 1) {
+          currentPage--;
+          render();
+        }
+      }
+      function nextPage() {
+        const tp = Math.ceil(getFiltered().length / PER_PAGE);
+        if (currentPage < tp) {
+          currentPage++;
+          render();
+        }
+      }
+      function debouncedSearch() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          currentSearch = document.getElementById("searchInput").value;
+          currentPage = 1;
+          render();
+        }, 200);
+      }
+
+      function refreshInbox() {
+        const btn = document.querySelector(".sidebar-actions .btn-primary");
+        btn.textContent = "↻ Refreshing...";
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = "↻ Refresh";
+          btn.disabled = false;
+          render();
+        }, 1200);
+      }
+
+      // ─── Thread Detail Modal ─────────────────────────────────────
+      function openThread(index) {
+        const t = ALL_THREADS[index];
+        if (!t) return;
+
+        const bodyText =
+          t.snippet + "\n\n--\n" + t.from.name + " (" + t.from.email + ")";
+
+        document.getElementById("modalContainer").style.display = "flex";
+        document.getElementById("modalContainer").innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>${t.subject}</h3>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-from">${t.from.name}</div>
+          <div class="modal-email">${t.from.email} &mdash; ${new Date(
+          t.date
+        ).toLocaleString()}</div>
+          <div class="modal-body-text">${bodyText}</div>
+          ${
+            t.aiLabel
+              ? `<div style="margin-top:12px;padding:10px 14px;background:#f0f5ff;border-radius:8px;font-size:13px;color:#0066ff">🤖 <strong>AI Suggestion:</strong> ${t.aiLabel}</div>`
+              : ""
+          }
+          <div class="modal-actions">
+            <button class="btn btn-primary" onclick="closeModal()">✉ Reply</button>
+            <button class="btn btn-secondary" onclick="closeModal()">📁 Archive</button>
+            <button class="btn btn-secondary" onclick="closeModal()">⏰ Snooze</button>
+            <button class="btn btn-secondary" onclick="closeModal()">🚩 Flag</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+      }
+
+      function closeModal() {
+        document.getElementById("modalContainer").style.display = "none";
+      }
+
+      // Close modal on escape
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") closeModal();
+      });
+
+      // ─── Init ────────────────────────────────────────────────────
+      render();
+    </script>
+  </body>
+</html>
