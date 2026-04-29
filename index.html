@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,user-scalable=no"
+    />
     <title>Zero — Inbox, Reimagined</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -10,17 +13,24 @@
       rel="stylesheet"
     />
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
       :root {
-        --bg: #f5f6fa;
-        --surface: #ffffff;
-        --hover: #f0f2f7;
-        --border: #e6e8ef;
-        --text: #161a24;
-        --text2: #6d7385;
-        --text3: #a3a8ba;
+        --bg: #f4f5f9;
+        --surface: #fff;
+        --hover: #eff0f5;
+        --push: #e4e6ee;
+        --border: #e2e4ec;
+        --text: #12141c;
+        --text2: #6a7086;
+        --text3: #9ca1b6;
         --accent: #4f6ef7;
-        --accent2: #6366f1;
         --accent-bg: #eef1ff;
+        --accent-ring: rgba(79, 110, 247, 0.25);
         --green: #16a34a;
         --green-bg: #e6f7ec;
         --amber: #d97706;
@@ -31,23 +41,22 @@
         --radius: 10px;
         --radius-sm: 7px;
         --ease: cubic-bezier(0.22, 1, 0.36, 1);
-      }
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+        --sidebar-w: 260px;
       }
       body {
         font-family: "Inter", -apple-system, sans-serif;
         background: var(--bg);
         color: var(--text);
-        height: 100vh;
+        height: 100dvh;
         overflow: hidden;
         -webkit-font-smoothing: antialiased;
-        font-feature-settings: "cv02";
+      }
+      ::selection {
+        background: var(--accent-bg);
+        color: var(--accent);
       }
       ::-webkit-scrollbar {
-        width: 5px;
+        width: 4px;
       }
       ::-webkit-scrollbar-thumb {
         background: var(--border);
@@ -56,16 +65,13 @@
       /* ── Layout ── */
       .app {
         display: grid;
-        grid-template-columns: 280px 1fr;
-        grid-template-rows: 52px 1fr;
-        height: 100vh;
-        transition: grid-template-columns 0.35s var(--ease);
+        grid-template-columns: var(--sidebar-w) 1fr;
+        grid-template-rows: 48px 1fr;
+        height: 100dvh;
+        transition: grid-template-columns 0.4s var(--ease);
       }
-      .app.focus {
-        grid-template-columns: 0 1fr;
-      }
-      .app.threading {
-        grid-template-columns: 280px 1fr;
+      .app.detail-open {
+        grid-template-columns: var(--sidebar-w) 1fr;
       }
       /* ── Header ── */
       .header {
@@ -75,38 +81,57 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 16px 0 20px;
+        padding: 0 12px 0 16px;
         z-index: 30;
+        position: relative;
       }
       .logo {
         display: flex;
         align-items: center;
-        gap: 9px;
-        font-weight: 800;
-        font-size: 15px;
-        letter-spacing: -0.3px;
+        gap: 8px;
         cursor: pointer;
+        font-weight: 800;
+        font-size: 14px;
+        letter-spacing: -0.2px;
         color: var(--text);
         text-decoration: none;
+        user-select: none;
       }
-      .logo-icon {
-        width: 26px;
-        height: 26px;
+      .logo-box {
+        width: 24px;
+        height: 24px;
         background: linear-gradient(135deg, var(--accent), var(--purple));
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #fff;
-        font-size: 12px;
-        font-weight: 700;
+        font-size: 10px;
+        font-weight: 800;
         box-shadow: 0 2px 6px rgba(79, 110, 247, 0.2);
       }
-      .mode-btn {
-        padding: 4px 10px;
-        border-radius: 6px;
+      .logo span {
+        background: linear-gradient(135deg, var(--accent), var(--purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .mode-group {
+        display: flex;
+        gap: 1px;
+        background: var(--bg);
+        padding: 2px;
+        border-radius: 7px;
+      }
+      .mode-tab {
+        padding: 4px 12px;
+        border-radius: 5px;
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 500;
         cursor: pointer;
         border: none;
         font-family: inherit;
@@ -114,59 +139,59 @@
         background: transparent;
         color: var(--text3);
       }
-      .mode-btn:hover {
-        background: var(--hover);
+      .mode-tab:hover {
         color: var(--text2);
       }
-      .mode-btn.active {
-        background: var(--accent-bg);
-        color: var(--accent);
+      .mode-tab.on {
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
       }
       .header-right {
         display: flex;
         align-items: center;
         gap: 8px;
       }
-      .search-pill {
+      .pulse-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        display: inline-block;
+      }
+      .streak-badge {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
-        border-radius: 20px;
-        border: 1px solid var(--border);
-        font-size: 12px;
+        gap: 3px;
+        font-size: 10px;
+        font-weight: 500;
         color: var(--text3);
-        cursor: text;
-        transition: 0.2s;
+        padding: 3px 8px;
+        border-radius: 20px;
         background: var(--bg);
       }
-      .search-pill:hover {
-        border-color: var(--text3);
-      }
-      .search-pill span {
-        color: var(--text3);
-        font-size: 11px;
-      }
-      .avatar-sm {
-        width: 28px;
-        height: 28px;
+      .avatar {
+        border: none;
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
         background: linear-gradient(135deg, var(--accent), var(--purple));
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 700;
         color: #fff;
         cursor: pointer;
         position: relative;
+        flex-shrink: 0;
       }
       .avatar-dot {
         position: absolute;
         bottom: -1px;
         right: -1px;
-        width: 9px;
-        height: 9px;
+        width: 8px;
+        height: 8px;
         background: var(--green);
         border: 2px solid var(--surface);
         border-radius: 50%;
@@ -178,20 +203,22 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        position: relative;
+        z-index: 20;
       }
       .sidebar-inner {
-        padding: 12px 10px;
+        padding: 10px 8px;
         display: flex;
         flex-direction: column;
         height: 100%;
         overflow-y: auto;
+        overflow-x: hidden;
       }
-      .btn {
-        display: inline-flex;
+      .compose-btn {
+        display: flex;
         align-items: center;
-        justify-content: center;
         gap: 6px;
-        padding: 8px 14px;
+        padding: 9px 14px;
         border-radius: var(--radius-sm);
         font-size: 12px;
         font-weight: 600;
@@ -199,61 +226,39 @@
         border: none;
         transition: all 0.2s;
         font-family: inherit;
-        white-space: nowrap;
-      }
-      .btn-primary {
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        background: linear-gradient(135deg, var(--accent), #6366f1);
         color: #fff;
         box-shadow: 0 1px 3px rgba(79, 110, 247, 0.2);
+        justify-content: center;
+        margin-bottom: 10px;
       }
-      .btn-primary:hover {
-        box-shadow: 0 3px 10px rgba(79, 110, 247, 0.25);
+      .compose-btn:hover {
+        box-shadow: 0 4px 12px rgba(79, 110, 247, 0.25);
         transform: translateY(-1px);
       }
-      .btn-primary:disabled {
-        opacity: 0.4;
-        transform: none;
-        box-shadow: none;
-        cursor: default;
+      .compose-btn:active {
+        transform: translateY(0);
       }
-      .btn-ghost {
-        background: transparent;
-        color: var(--text2);
-        border: 1px solid var(--border);
-      }
-      .btn-ghost:hover {
-        background: var(--hover);
-        color: var(--text);
-      }
-      .btn-soft {
-        background: transparent;
-        color: var(--text2);
-        border: 1px solid transparent;
-      }
-      .btn-soft:hover {
-        background: var(--hover);
-        color: var(--text);
-        border-color: var(--border);
-      }
-      .sidebar-search {
+      .search-field {
         display: flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 10px;
+        padding: 6px 9px;
         border-radius: var(--radius-sm);
         border: 1px solid var(--border);
         font-size: 12px;
         color: var(--text3);
         cursor: text;
-        margin-bottom: 12px;
         transition: 0.2s;
         background: var(--bg);
+        margin-bottom: 8px;
       }
-      .sidebar-search:focus-within {
+      .search-field:focus-within {
         border-color: var(--accent);
-        box-shadow: 0 0 0 2px var(--accent-bg);
+        box-shadow: 0 0 0 3px var(--accent-ring);
+        background: var(--surface);
       }
-      .sidebar-search input {
+      .search-field input {
         background: none;
         border: none;
         outline: none;
@@ -262,27 +267,30 @@
         width: 100%;
         color: var(--text);
       }
-      .sidebar-search input::placeholder {
+      .search-field input::placeholder {
         color: var(--text3);
       }
-      .section-label {
+      .sec-label {
         font-size: 9px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 1px;
         color: var(--text3);
-        margin: 14px 0 4px 8px;
+        margin: 12px 0 3px 8px;
+      }
+      .sec-label:first-of-type {
+        margin-top: 0;
       }
       .nav-item {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 6px 10px;
-        border-radius: var(--radius-sm);
+        gap: 7px;
+        padding: 5px 9px;
+        border-radius: 6px;
         font-size: 12px;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.1s;
+        transition: all 0.12s;
         color: var(--text2);
         text-decoration: none;
         border: none;
@@ -290,91 +298,86 @@
         width: 100%;
         text-align: left;
         font-family: inherit;
+        position: relative;
       }
       .nav-item:hover {
         background: var(--hover);
         color: var(--text);
       }
-      .nav-item.active {
+      .nav-item:active {
+        background: var(--push);
+        transform: scale(0.98);
+      }
+      .nav-item.on {
         background: var(--accent-bg);
         color: var(--accent);
         font-weight: 600;
       }
-      .nav-item .icon {
-        font-size: 13px;
+      .nav-item .ico {
+        font-size: 12px;
         width: 18px;
         text-align: center;
         opacity: 0.6;
       }
-      .nav-item .count {
-        margin-left: auto;
-        font-size: 11px;
+      .nav-item .cnt {
+        font-size: 10px;
         color: var(--text3);
         font-weight: 500;
+        margin-left: auto;
+        padding: 0 5px;
       }
-      .nav-item.active .count {
+      .nav-item.on .cnt {
         color: var(--accent);
       }
-      .nav-item .hotkey {
-        font-size: 9px;
+      .nav-item .hkey {
+        font-size: 8px;
         color: var(--text3);
-        margin-left: auto;
+        margin-left: 8px;
         background: var(--bg);
-        padding: 1px 5px;
+        padding: 1px 4px;
         border-radius: 3px;
         font-weight: 500;
+        display: none;
       }
-      .spacer {
-        flex: 1;
-      }
-      .bottom-actions {
-        display: flex;
-        gap: 4px;
-        margin-top: 8px;
-        padding-top: 8px;
-        border-top: 1px solid var(--border);
-      }
-      .bottom-actions .btn {
-        flex: 1;
-        font-size: 11px;
-        padding: 6px;
+      /* ── Drop target highlight ── */
+      .nav-item.drag-over {
+        background: var(--accent-bg);
+        border: 1px dashed var(--accent);
+        padding: 4px 8px;
       }
       /* ── Toolbar ── */
       .toolbar {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 3px;
         padding: 0;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         flex-wrap: wrap;
-        min-height: 32px;
+        min-height: 28px;
       }
       .toolbar .btn {
-        font-size: 11px;
-        padding: 4px 10px;
-        border-radius: 6px;
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 5px;
       }
       .toolbar .count {
         font-size: 11px;
         color: var(--text3);
-        margin-right: 8px;
-      }
-      .toolbar select {
-        padding: 4px 8px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        font-size: 11px;
-        font-family: inherit;
-        background: var(--surface);
-        color: var(--text);
-        outline: none;
-        cursor: pointer;
+        margin-right: 6px;
+        font-weight: 500;
       }
       .toolbar-sep {
         width: 1px;
-        height: 18px;
+        height: 14px;
         background: var(--border);
-        margin: 0 4px;
+        margin: 0 3px;
+        flex-shrink: 0;
+      }
+      .toolbar .badge {
+        padding: 0 5px;
+        font-size: 9px;
+        height: 16px;
+        line-height: 16px;
       }
       /* ── Content ── */
       .content {
@@ -383,85 +386,142 @@
         overflow: hidden;
         background: var(--bg);
       }
-      .inbox-scroll {
+      .scroll {
         flex: 1;
         overflow-y: auto;
+        overflow-x: hidden;
         padding: 0;
+        -webkit-overflow-scrolling: touch;
       }
-      .inbox-inner {
+      .inner {
         max-width: 820px;
         margin: 0 auto;
-        padding: 16px 24px 32px;
+        padding: 12px 20px 24px;
       }
-      .inbox-top {
+      .inbox-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 2px;
+        margin-bottom: 6px;
       }
       .inbox-title {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 800;
-        letter-spacing: -0.3px;
+        letter-spacing: -0.2px;
       }
       .inbox-sub {
-        font-size: 12px;
+        font-size: 11px;
         color: var(--text3);
         font-weight: 500;
       }
-      /* ── Thread Row ── */
+      /* ── Batch bar ── */
+      .batch-bar {
+        display: none;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 10px;
+        background: var(--accent-bg);
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        margin-bottom: 8px;
+        font-size: 11px;
+        color: var(--accent);
+        animation: slideDown 0.2s var(--ease);
+      }
+      .batch-bar.show {
+        display: flex;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .batch-bar .cnt {
+        font-weight: 700;
+        margin-right: 2px;
+      }
+      .batch-bar .btn {
+        font-size: 9px;
+        padding: 3px 7px;
+        border-radius: 4px;
+      }
+      /* ── Time group label ── */
+      .time-group {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 10px 8px 4px;
+        margin-top: 4px;
+      }
+      /* ── Thread row ── */
       .threads {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 1px;
       }
       .thread-row {
         display: grid;
-        grid-template-columns: 26px 28px 1fr auto;
-        gap: 8px;
-        padding: 9px 12px 9px 8px;
+        grid-template-columns: 22px 26px 1fr auto;
+        gap: 6px;
+        padding: 8px 10px 8px 6px;
         cursor: pointer;
         transition: all 0.15s;
-        border-radius: var(--radius);
+        border-radius: 8px;
         align-items: start;
         background: var(--surface);
         border: 1px solid transparent;
         position: relative;
-      }
-      .thread-row:hover {
-        border-color: var(--border);
-        background: var(--surface);
+        user-select: none;
       }
       .thread-row:active {
-        transform: scale(0.995);
+        transform: scale(0.99);
+        background: var(--hover);
       }
-      .thread-row.unread {
+      .thread-row:hover {
+        background: var(--surface);
+        border-color: var(--border);
+      }
+      .thread-row:has(.cb.on) {
+        background: var(--accent-bg);
+        border-color: var(--accent);
+      }
+      .thread-row.fr {
         background: var(--surface);
         border-left: 2px solid var(--accent);
       }
-      .thread-row.selected {
-        background: var(--accent-bg) !important;
-        border-color: var(--accent) !important;
+      .thread-row.done {
+        opacity: 0.5;
       }
-      .thread-row .cb {
-        width: 14px;
-        height: 14px;
+      .thread-row.done:hover {
+        opacity: 0.8;
+      }
+      /* Checkbox */
+      .cb {
+        width: 13px;
+        height: 13px;
         border: 1.5px solid var(--border);
         border-radius: 3px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-top: 3px;
+        margin-top: 2px;
         transition: 0.1s;
         flex-shrink: 0;
         background: var(--surface);
       }
-      .thread-row .cb.checked {
+      .cb.on {
         background: var(--accent);
         border-color: var(--accent);
       }
-      .thread-row .cb.checked::after {
+      .cb.on::after {
         content: "";
         width: 4px;
         height: 7px;
@@ -469,125 +529,148 @@
         border-top: none;
         border-left: none;
         transform: rotate(45deg);
-        margin-top: -2px;
+        margin-top: -1px;
       }
-      .thread-av {
-        width: 28px;
-        height: 28px;
+      .cb:hover {
+        border-color: var(--accent);
+      }
+      /* Avatar */
+      .th-av {
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 700;
         color: #fff;
         flex-shrink: 0;
-        margin-top: 1px;
-        position: relative;
         transition: 0.15s;
       }
-      .thread-row.unread .thread-av {
-        width: 30px;
-        height: 30px;
-        font-size: 11px;
+      .thread-row.fr .th-av {
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
       }
-      .thread-body {
+      /* Body */
+      .th-body {
         min-width: 0;
       }
-      .thread-from {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 1px;
+      .th-from {
+        font-size: 11px;
+        font-weight: 500;
+        margin-bottom: 0;
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 3px;
+        color: var(--text2);
       }
-      .thread-row.unread .thread-from {
-        font-weight: 700;
+      .thread-row.fr .th-from {
+        font-weight: 600;
+        color: var(--text);
       }
-      .thread-subject {
+      .th-sub {
         font-size: 12px;
         font-weight: 500;
         color: var(--text);
-        margin-bottom: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        margin-bottom: 0;
       }
-      .thread-row.unread .thread-subject {
+      .thread-row.fr .th-sub {
         font-weight: 600;
       }
-      .thread-snippet {
-        font-size: 11px;
+      .th-snip {
+        font-size: 10px;
         color: var(--text3);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         line-height: 1.3;
-        margin-top: 1px;
+        margin-top: 0;
       }
-      .thread-meta {
-        text-align: right;
-        flex-shrink: 0;
+      .th-tags {
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 1px;
+        gap: 2px;
+        margin-top: 1px;
+        flex-wrap: wrap;
       }
-      .thread-date {
-        font-size: 10px;
-        color: var(--text3);
-        font-weight: 500;
-      }
-      .thread-tag {
-        font-size: 8px;
+      .tag {
+        font-size: 7px;
         padding: 1px 4px;
         border-radius: 3px;
         font-weight: 600;
         letter-spacing: 0.1px;
         text-transform: uppercase;
       }
-      .thread-tag.urgency {
+      .tag.urgent {
         background: var(--red-bg);
         color: var(--red);
       }
-      .thread-tag.review {
+      .tag.review {
         background: var(--amber-bg);
         color: var(--amber);
       }
-      .thread-tag.bill {
+      .tag.bill {
         background: var(--green-bg);
         color: var(--green);
       }
-      .thread-tag.ai {
+      .tag.wait {
+        background: #f0f0f0;
+        color: #777;
+      }
+      .tag.ai {
         background: var(--accent-bg);
         color: var(--accent);
       }
-      /* Quick action buttons (appear on hover) */
-      .quick-actions {
+      .th-meta {
+        text-align: right;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0;
+      }
+      .th-date {
+        font-size: 9px;
+        color: var(--text3);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      /* ── Drag & Drop visual ── */
+      .thread-row.dragging {
+        opacity: 0.4;
+      }
+      .thread-row.drag-above {
+        border-top: 2px solid var(--accent);
+      }
+      /* ── Quick actions (visible on hover) ── */
+      .qa-wrap {
         position: absolute;
-        right: -1px;
-        top: -1px;
-        bottom: -1px;
+        right: 0;
+        top: 0;
+        bottom: 0;
         display: none;
         align-items: center;
-        gap: 0;
-        background: linear-gradient(270deg, var(--surface) 60%, transparent);
-        padding: 0 8px 0 20px;
-        border-radius: 0 var(--radius) var(--radius) 0;
+        gap: 1px;
+        background: linear-gradient(270deg, var(--surface) 55%, transparent);
+        padding: 0 6px 0 24px;
+        border-radius: 0 8px 8px 0;
         pointer-events: none;
       }
-      .thread-row:hover .quick-actions {
+      .thread-row:hover .qa-wrap {
         display: flex;
         pointer-events: auto;
       }
       .qa-btn {
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
         border: none;
-        border-radius: 4px;
+        border-radius: 3px;
         cursor: pointer;
-        font-size: 11px;
+        font-size: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -599,50 +682,75 @@
         background: var(--hover);
         color: var(--text);
       }
-      /* ── Thread Detail ── */
+      .qa-btn:active {
+        background: var(--push);
+        transform: scale(0.9);
+      }
+      /* ── Swipe hint (mobile) ── */
+      .swipe-hint {
+        display: none;
+        position: absolute;
+        inset: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .swipe-bg {
+        position: absolute;
+        inset: 0;
+        border-radius: 8px;
+        transition: transform 0.3s var(--ease);
+      }
+      .swipe-archive {
+        background: #dc2626;
+        transform: translateX(-100%);
+      }
+      .swipe-snooze {
+        background: #f59e0b;
+        transform: translateX(100%);
+      }
+      /* ── Detail view ── */
       .detail {
         display: none;
         flex-direction: column;
         height: 100%;
         background: var(--surface);
         overflow: hidden;
-        animation: slideIn 0.25s var(--ease);
+        animation: di 0.25s var(--ease);
       }
-      .detail.active {
+      .detail.on {
         display: flex;
       }
-      @keyframes slideIn {
+      @keyframes di {
         from {
           opacity: 0;
-          transform: translateX(10px);
         }
         to {
           opacity: 1;
-          transform: translateX(0);
         }
       }
-      .detail-header {
+      .detail-head {
         flex-shrink: 0;
         border-bottom: 1px solid var(--border);
-        padding: 0 28px;
+        padding: 0 20px;
       }
       .detail-nav {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 8px 0;
+        gap: 4px;
+        padding: 6px 0;
       }
       .detail-back {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 4px;
         background: none;
         border: none;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 500;
         color: var(--text2);
         cursor: pointer;
-        padding: 4px 8px;
+        padding: 4px 7px;
         border-radius: 5px;
         transition: 0.15s;
         font-family: inherit;
@@ -651,17 +759,17 @@
         background: var(--hover);
         color: var(--text);
       }
-      .detail-nav-right {
+      .detail-nav-r {
         margin-left: auto;
         display: flex;
-        gap: 2px;
+        gap: 1px;
       }
       .detail-nav-btn {
         background: none;
         border: none;
-        padding: 4px 7px;
-        border-radius: 5px;
-        font-size: 11px;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-size: 10px;
         color: var(--text3);
         cursor: pointer;
         transition: 0.15s;
@@ -672,375 +780,555 @@
         color: var(--text2);
       }
       .detail-nav-btn:disabled {
-        opacity: 0.3;
+        opacity: 0.2;
       }
-      .detail-subject {
-        padding: 16px 0 0;
-        font-size: 18px;
+      .detail-subj {
+        padding: 12px 0 0;
+        font-size: 16px;
         font-weight: 700;
         line-height: 1.3;
-        letter-spacing: -0.2px;
+        letter-spacing: -0.1px;
       }
-      .detail-actions {
+      .detail-acts {
         display: flex;
-        gap: 3px;
-        padding: 10px 0 12px;
+        gap: 2px;
+        padding: 8px 0 10px;
         border-bottom: 1px solid var(--border);
       }
-      .detail-actions .btn {
-        font-size: 11px;
-        padding: 5px 10px;
-        border-radius: 5px;
+      .detail-acts .btn {
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 4px;
       }
       .detail-body {
         flex: 1;
         overflow-y: auto;
-        padding: 20px 28px 48px;
-        max-width: 640px;
+        padding: 16px 20px 40px;
+        max-width: 600px;
         scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
       }
       .detail-sender {
         display: flex;
         align-items: flex-start;
-        gap: 10px;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
+        gap: 9px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
         border-bottom: 1px solid var(--border);
       }
-      .detail-sender-av {
-        width: 34px;
-        height: 34px;
+      .detail-sav {
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
         color: #fff;
         flex-shrink: 0;
       }
-      .detail-sender-info {
+      .detail-sinfo {
         min-width: 0;
       }
-      .detail-sender-name {
-        font-size: 13px;
+      .detail-sname {
+        font-size: 12px;
         font-weight: 600;
       }
-      .detail-sender-meta {
-        font-size: 11px;
+      .detail-sm {
+        font-size: 10px;
         color: var(--text3);
       }
       .detail-text {
-        font-size: 13px;
+        font-size: 12px;
         line-height: 1.7;
         color: var(--text);
       }
       .detail-text p {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
-      .detail-text .quote {
+      .detail-text .q {
         border-left: 2px solid var(--border);
-        padding: 10px 12px;
+        padding: 8px 10px;
         color: var(--text2);
-        margin: 10px 0;
+        margin: 8px 0;
         background: var(--bg);
         border-radius: 0 6px 6px 0;
-        font-size: 12px;
+        font-size: 11px;
       }
       .detail-text .sig {
         color: var(--text3);
+        font-size: 10px;
+        margin-top: 16px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+      }
+      .detail-text .b {
+        margin: 1px 0;
+        padding-left: 4px;
         font-size: 11px;
-        margin-top: 20px;
-        padding-top: 12px;
-        border-top: 1px solid var(--border);
       }
-      .detail-text .bullet {
-        margin: 2px 0;
-        padding-left: 6px;
-        font-size: 12px;
-      }
-      .detail-text .divider {
-        color: var(--border);
-        font-size: 9px;
-        margin: 6px 0;
-        letter-spacing: 2px;
-      }
-      /* Quick reply area */
-      .quick-reply {
-        padding: 12px 0 0;
-        margin-top: auto;
-        border-top: 1px solid var(--border);
+      /* Quick Reply */
+      .qr {
         display: none;
+        padding: 10px 0;
+        margin-top: 8px;
+        border-top: 1px solid var(--border);
       }
-      .quick-reply.show {
+      .qr.on {
         display: block;
       }
-      .quick-reply textarea {
+      .qr textarea {
         width: 100%;
-        padding: 8px 12px;
+        padding: 6px 10px;
         border: 1px solid var(--border);
         border-radius: 6px;
-        font-size: 12px;
+        font-size: 11px;
         font-family: inherit;
         resize: none;
-        min-height: 56px;
+        min-height: 44px;
         outline: none;
         transition: 0.2s;
         background: var(--bg);
         color: var(--text);
       }
-      .quick-reply textarea:focus {
+      .qr textarea:focus {
         border-color: var(--accent);
         box-shadow: 0 0 0 2px var(--accent-bg);
       }
-      .quick-reply-foot {
+      .qr-foot {
         display: flex;
         justify-content: space-between;
+        gap: 6px;
+        margin-top: 4px;
         align-items: center;
-        margin-top: 6px;
       }
-      .quick-reply-foot .btn {
-        font-size: 11px;
-        padding: 5px 12px;
-      }
-      .quick-snippets {
+      .qr-snippets {
         display: flex;
-        gap: 4px;
+        gap: 2px;
         flex-wrap: wrap;
       }
-      .quick-snippets button {
-        font-size: 10px;
-        padding: 3px 7px;
-        border-radius: 4px;
+      .qr-snippets button {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 3px;
         border: 1px solid var(--border);
         background: transparent;
         cursor: pointer;
         color: var(--text3);
         transition: 0.1s;
         font-family: inherit;
+        line-height: 1.4;
       }
-      .quick-snippets button:hover {
+      .qr-snippets button:hover {
         background: var(--hover);
-        color: var(--text2);
         border-color: var(--text3);
       }
-      /* ── Undo Bar ── */
-      .undo-bar {
-        position: fixed;
-        bottom: 16px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 8px 16px;
-        background: var(--text);
-        color: #fff;
-        border-radius: 8px;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        z-index: 100;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s var(--ease);
-        opacity: 0;
-        pointer-events: none;
-        transform: translateX(-50%) translateY(10px);
-      }
-      .undo-bar.show {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateX(-50%) translateY(0);
-      }
-      .undo-bar button {
-        background: rgba(255, 255, 255, 0.15);
-        border: none;
-        color: #fff;
-        padding: 4px 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 11px;
-        font-weight: 600;
-        transition: 0.1s;
-        font-family: inherit;
-      }
-      .undo-bar button:hover {
-        background: rgba(255, 255, 255, 0.25);
-      }
-      /* ── Snooze Dropdown ── */
-      .snooze-dropdown {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        z-index: 50;
-        padding: 6px;
-        min-width: 160px;
-      }
-      .snooze-dropdown.show {
-        display: block;
-      }
-      .snooze-item {
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 12px;
-        cursor: pointer;
-        transition: 0.1s;
-        color: var(--text2);
-        border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
-        font-family: inherit;
-      }
-      .snooze-item:hover {
-        background: var(--hover);
-        color: var(--text);
-      }
-      /* ── Empty ── */
+      /* ── Empty state ── */
       .empty {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 60px 20px;
-        animation: fadeIn 0.4s;
+        padding: 48px 20px;
+        animation: ei 0.4s;
       }
-      @keyframes fadeIn {
+      @keyframes ei {
         from {
           opacity: 0;
+          transform: translateY(8px);
         }
         to {
           opacity: 1;
+          transform: translateY(0);
         }
       }
       .empty-icon {
-        font-size: 48px;
-        margin-bottom: 12px;
+        font-size: 40px;
+        margin-bottom: 10px;
       }
       .empty h3 {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
       }
       .empty p {
-        font-size: 12px;
+        font-size: 11px;
         color: var(--text3);
-        max-width: 280px;
+        max-width: 240px;
         line-height: 1.5;
       }
+      .empty .hint {
+        font-size: 10px;
+        color: var(--text3);
+        margin-top: 10px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: var(--bg);
+      }
       /* ── Pagination ── */
-      .pagination {
+      .pg {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 12px;
-        padding: 8px 0 0;
+        margin-top: 10px;
+        padding: 6px 0 0;
         border-top: 1px solid var(--border);
       }
-      .pagination button {
-        padding: 5px 10px;
+      .pg button {
+        padding: 4px 8px;
         border: 1px solid var(--border);
         border-radius: 5px;
         background: var(--surface);
         cursor: pointer;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 500;
         transition: 0.15s;
         font-family: inherit;
         color: var(--text2);
       }
-      .pagination button:hover {
+      .pg button:hover {
         background: var(--hover);
         color: var(--text);
       }
-      .pagination button:disabled {
-        opacity: 0.3;
+      .pg button:disabled {
+        opacity: 0.25;
         cursor: default;
+        background: transparent;
       }
-      .pagination-label {
-        font-size: 11px;
+      .pg-l {
+        font-size: 10px;
         color: var(--text3);
       }
-      /* ── Focus Bar ── */
-      .focus-bar {
-        display: none;
+      /* ── Toast / Undo ── */
+      .toast {
+        position: fixed;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        padding: 7px 14px;
+        background: #1c1f2e;
+        color: #fff;
+        border-radius: 8px;
+        font-size: 11px;
+        display: flex;
         align-items: center;
         gap: 10px;
-        padding: 8px 24px;
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
-        font-size: 11px;
-        color: var(--text2);
+        z-index: 100;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        transition: all 0.35s var(--ease);
+        opacity: 0;
+        pointer-events: none;
+        backdrop-filter: blur(8px);
       }
-      .focus-bar.show {
+      .toast.show {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+      }
+      .toast button {
+        background: rgba(255, 255, 255, 0.12);
+        border: none;
+        color: #fff;
+        padding: 3px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 10px;
+        font-weight: 600;
+        transition: 0.1s;
+        font-family: inherit;
+      }
+      .toast button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      /* ── Walkthrough overlay ── */
+      .walk {
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .walk.show {
         display: flex;
       }
-      .focus-bar .focus-dot {
+      .walk-bg {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(3px);
+      }
+      .walk-card {
+        position: relative;
+        background: var(--surface);
+        border-radius: 14px;
+        padding: 32px 36px;
+        max-width: 380px;
+        width: 90vw;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        animation: wc 0.4s var(--ease);
+      }
+      @keyframes wc {
+        from {
+          opacity: 0;
+          transform: scale(0.92) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .walk-card .icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+      }
+      .walk-card h2 {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 4px;
+        letter-spacing: -0.2px;
+      }
+      .walk-card p {
+        font-size: 12px;
+        color: var(--text2);
+        line-height: 1.6;
+        margin-bottom: 16px;
+      }
+      .walk-card .steps {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .walk-card .dot {
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: var(--green);
-        animation: pulse 2s infinite;
+        background: var(--border);
+        transition: 0.3s;
       }
-      @keyframes pulse {
+      .walk-card .dot.on {
+        background: var(--accent);
+        width: 18px;
+        border-radius: 3px;
+      }
+      .walk-card .btn {
+        padding: 8px 20px;
+      }
+      /* ── Compose modal ── */
+      .compose {
+        position: fixed;
+        bottom: 14px;
+        right: 14px;
+        z-index: 50;
+        display: none;
+      }
+      .compose.on {
+        display: block;
+      }
+      .compose-inner {
+        background: var(--surface);
+        border-radius: 10px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+          0 0 0 1px rgba(0, 0, 0, 0.03);
+        width: 400px;
+        max-width: calc(100vw-28px);
+        overflow: hidden;
+        animation: ci 0.3s var(--ease);
+      }
+      @keyframes ci {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .compose-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+      }
+      .compose-head h3 {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .compose-head button {
+        background: none;
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+        color: var(--text3);
+        padding: 2px 4px;
+        border-radius: 3px;
+        transition: 0.15s;
+      }
+      .compose-head button:hover {
+        background: var(--hover);
+        color: var(--text);
+      }
+      .compose-inner input {
+        width: 100%;
+        padding: 8px 14px;
+        border: none;
+        font-size: 11px;
+        outline: none;
+        font-family: inherit;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
+      }
+      .compose-inner textarea {
+        width: 100%;
+        padding: 8px 14px;
+        border: none;
+        font-size: 11px;
+        outline: none;
+        font-family: inherit;
+        resize: none;
+        min-height: 80px;
+        color: var(--text);
+      }
+      .compose-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 4px;
+        padding: 8px 14px;
+        border-top: 1px solid var(--border);
+      }
+      .compose-foot .btn {
+        font-size: 10px;
+        padding: 5px 10px;
+      }
+      /* ── Shortcuts overlay ── */
+      .sc-over {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .sc-over.show {
+        display: flex;
+      }
+      .sc-bg {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(2px);
+      }
+      .sc-card {
+        position: relative;
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 20px 24px;
+        max-width: 360px;
+        width: 90vw;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+      }
+      .sc-card h3 {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+      .sc-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2px 12px;
+      }
+      .sc-k {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10px;
+        color: var(--text2);
+        padding: 2px 0;
+      }
+      .sc-k kbd {
+        background: var(--bg);
+        padding: 1px 4px;
+        border-radius: 3px;
+        font-size: 9px;
+        font-weight: 600;
+        color: var(--text);
+        font-family: inherit;
+        border: 1px solid var(--border);
+        min-width: 16px;
+        text-align: center;
+        line-height: 1.5;
+      }
+      .sc-k span {
+        color: var(--text3);
+      }
+      /* ── Focus bar ── */
+      .focus-bar {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 18px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text2);
+      }
+      .focus-bar.on {
+        display: flex;
+      }
+      .focus-bar .dot {
+        width: 5px;
+        height: 5px;
+        background: var(--green);
+        border-radius: 50%;
+        animation: pl 2s infinite;
+      }
+      @keyframes pl {
         0%,
         100% {
           opacity: 1;
         }
         50% {
-          opacity: 0.4;
+          opacity: 0.3;
         }
       }
       .focus-bar .btn {
-        font-size: 10px;
-        padding: 3px 8px;
+        font-size: 9px;
+        padding: 2px 7px;
+        border-radius: 3px;
+      }
+      /* ── Hover tooltips ── */
+      [data-tip] {
+        position: relative;
+      }
+      [data-tip]::after {
+        content: attr(data-tip);
+        position: absolute;
+        bottom: calc(100%+5px);
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 3px 7px;
+        background: #1c1f2e;
+        color: #fff;
+        font-size: 9px;
         border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.15s;
+        font-weight: 500;
       }
-      /* ── Batch Bar ── */
-      .batch-bar {
-        display: none;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        background: var(--accent-bg);
-        border: 1px solid var(--accent);
-        border-radius: 8px;
-        margin-bottom: 8px;
-        font-size: 11px;
-        color: var(--accent);
+      [data-tip]:hover::after {
+        opacity: 1;
       }
-      .batch-bar.show {
-        display: flex;
-      }
-      .batch-bar .count {
-        font-weight: 600;
-        margin-right: 4px;
-      }
-      .batch-bar .btn {
-        font-size: 10px;
-        padding: 3px 8px;
-        border-radius: 4px;
-      }
-      /* ── Day Streak ── */
-      .streak {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 10px;
-        color: var(--text3);
-        padding: 2px 8px;
-        border-radius: 4px;
-        background: var(--bg);
-      }
-      .streak .fire {
-        font-size: 11px;
-      }
-      /* ── Loading skeleton ── */
-      @keyframes shimmer {
+      /* ── Skeleton loader ── */
+      @keyframes sk {
         0% {
           background-position: -200% 0;
         }
@@ -1056,381 +1344,365 @@
           var(--border) 75%
         );
         background-size: 200% 100%;
-        animation: shimmer 1.5s infinite;
+        animation: sk 1.5s infinite;
         border-radius: 4px;
-        height: 12px;
+        height: 10px;
         margin-bottom: 4px;
       }
-      /* ── Overlay Keyboard Shortcuts ── */
-      .shortcuts-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 200;
-        display: none;
-        align-items: center;
-        justify-content: center;
-      }
-      .shortcuts-overlay.show {
-        display: flex;
-      }
-      .shortcuts-bg {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(2px);
-      }
-      .shortcuts-card {
-        position: relative;
-        background: var(--surface);
-        border-radius: 12px;
-        padding: 24px 28px;
-        max-width: 380px;
-        width: 90vw;
-        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-      }
-      .shortcuts-card h3 {
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 12px;
-      }
-      .shortcuts-card .grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4px 16px;
-      }
-      .shortcuts-card .k {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        color: var(--text2);
-        padding: 3px 0;
-      }
-      .shortcuts-card .k code {
-        background: var(--bg);
-        padding: 1px 5px;
-        border-radius: 3px;
-        font-size: 10px;
-        font-weight: 600;
-        color: var(--text);
-        font-family: inherit;
-        border: 1px solid var(--border);
-        min-width: 20px;
-        text-align: center;
-      }
-      .shortcuts-card .k span {
-        color: var(--text3);
-      }
+      /* ── Responsive ── */
       @media (max-width: 860px) {
-        .app {
-          grid-template-columns: 1fr;
+        :root {
+          --sidebar-w: 0;
         }
         .sidebar {
           display: none;
         }
-        .inbox-inner {
-          padding: 12px 12px 20px;
+        .header-left .mode-group {
+          display: none;
+        }
+        .header-left .mode-group.mobile {
+          display: flex;
+        }
+        .inner {
+          padding: 8px 10px 16px;
+        }
+        .toast {
+          font-size: 10px;
+          padding: 6px 12px;
+          bottom: 8px;
+          left: 12px;
+          right: 12px;
+          transform: none;
+          width: auto;
+          border-radius: 6px;
+        }
+        .toast.show {
+          transform: none;
+          left: 12px;
+          right: 12px;
+        }
+        .compose {
+          left: 14px;
+          right: 14px;
+          bottom: 14px;
+        }
+        .compose-inner {
+          width: 100%;
         }
         .detail-body {
-          padding: 14px;
+          padding: 12px 14px 32px;
         }
-        .detail-header {
-          padding: 0 14px;
+        .detail-head {
+          padding: 0 12px;
         }
-        .toolbar {
-          flex-wrap: wrap;
-          gap: 3px;
+        .qa-wrap {
+          display: flex !important;
+          opacity: 1;
+          position: relative;
+          background: none;
+          padding: 0;
+          pointer-events: auto;
+        }
+        .thread-row .qa-wrap {
+          display: none;
         }
       }
     </style>
   </head>
   <body>
     <div class="app" id="app">
-      <!-- Header -->
       <header class="header">
-        <div class="logo" onclick="showInbox()">
-          <div class="logo-icon">Z</div>
-          <span>Zero</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:2px">
-          <button class="mode-btn active" onclick="setMode('inbox')">
-            Inbox
-          </button>
-          <button class="mode-btn" onclick="setMode('focus')">⚡Focus</button>
+        <div class="header-left">
+          <div class="logo" onclick="goHome()">
+            <div class="logo-box">Z</div>
+            <span>Zero</span>
+          </div>
+          <div class="mode-group">
+            <button class="mode-tab on" onclick="setMode('inbox')">
+              Inbox
+            </button>
+            <button class="mode-tab" onclick="setMode('focus')">⚡Focus</button>
+          </div>
         </div>
         <div class="header-right">
-          <div class="streak"><span class="fire">🔥</span>12-day streak</div>
-          <div class="avatar-sm">
+          <div class="streak-badge" data-tip="Your productivity streak">
+            🔥 12
+          </div>
+          <div class="avatar" onclick="showShortcuts()" data-tip="Shortcuts">
             <div class="avatar-dot"></div>
             D
           </div>
         </div>
       </header>
-      <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-inner">
-          <button
-            class="btn btn-primary"
-            style="margin-bottom:10px"
-            onclick="toggleCompose()"
-          >
-            ✏ New
+          <button class="compose-btn" onclick="toggleCompose()">
+            ✏ New Message
           </button>
           <div
-            class="sidebar-search"
-            onclick="document.getElementById('sidebarSearchInput').focus()"
+            class="search-field"
+            onclick="document.getElementById('sSearch').focus()"
           >
-            <span style="color:var(--text3);font-size:11px">⌕</span>
+            <span style="font-size:10px;opacity:.6">⌕</span>
             <input
-              id="sidebarSearchInput"
+              id="sSearch"
               placeholder="Search mail..."
               oninput="debouncedSearch()"
+              autocomplete="off"
             />
           </div>
-          <div class="section-label">Folders</div>
-          <button class="nav-item active" onclick="setFolder('inbox')">
-            <span class="icon">📥</span>Inbox<span class="count" id="fInbox"
+          <div class="sec-label">Focus</div>
+          <button
+            class="nav-item on"
+            data-folder="inbox"
+            onclick="setFolder('inbox')"
+          >
+            <span class="ico">📥</span>Inbox<span class="cnt" id="cInbox"
               >26</span
-            >
+            ><span class="hkey">I</span>
           </button>
-          <button class="nav-item" onclick="setFolder('needs')">
-            <span class="icon">⚡</span>Needs Reply<span
-              class="count"
-              id="fNeeds"
+          <button
+            class="nav-item"
+            data-folder="needs"
+            onclick="setFolder('needs')"
+          >
+            <span class="ico">⚡</span>Needs Reply<span class="cnt" id="cNeeds"
               >8</span
             >
           </button>
-          <button class="nav-item" onclick="setFolder('waiting')">
-            <span class="icon">⏳</span>Waiting<span class="count" id="fWait"
+          <button
+            class="nav-item"
+            data-folder="waiting"
+            onclick="setFolder('waiting')"
+          >
+            <span class="ico">⏳</span>Waiting<span class="cnt" id="cWait"
               >4</span
             >
           </button>
-          <button class="nav-item" onclick="setFolder('flagged')">
-            <span class="icon">★</span>Flagged<span class="count" id="fFlag"
+          <div class="sec-label">Folders</div>
+          <button
+            class="nav-item"
+            data-folder="flagged"
+            onclick="setFolder('flagged')"
+          >
+            <span class="ico">★</span>Flagged<span class="cnt" id="cFlag"
               >3</span
             >
           </button>
-          <button class="nav-item" onclick="setFolder('snoozed')">
-            <span class="icon">⏰</span>Snoozed<span class="count" id="fSnooze"
+          <button
+            class="nav-item"
+            data-folder="snoozed"
+            onclick="setFolder('snoozed')"
+          >
+            <span class="ico">⏰</span>Snoozed<span class="cnt" id="cSnooze"
               >2</span
             >
           </button>
-          <button class="nav-item" onclick="setFolder('done')">
-            <span class="icon">✓</span>Done<span class="count" id="fDone"
-              >12</span
-            >
+          <button
+            class="nav-item"
+            data-folder="done"
+            onclick="setFolder('done')"
+          >
+            <span class="ico">✓</span>Done<span class="cnt" id="cDone">12</span>
           </button>
-          <div class="section-label">Mail</div>
-          <button class="nav-item" onclick="setFolder('all')">
-            <span class="icon">📬</span>All Mail<span class="count" id="fAll"
+          <div class="sec-label">Mail</div>
+          <button class="nav-item" data-folder="all" onclick="setFolder('all')">
+            <span class="ico">📬</span>All Mail<span class="cnt" id="cAll"
               >36</span
             >
           </button>
+          <div style="flex:1"></div>
           <button class="nav-item" onclick="showShortcuts()">
-            <span class="icon">⌨</span>Shortcuts
+            <span class="ico">⌨</span>Shortcuts
           </button>
-          <div class="spacer"></div>
-          <div class="bottom-actions">
-            <button class="btn btn-ghost" onclick="setMode('focus')">
-              ⚡ Focus
-            </button>
-            <button class="btn btn-ghost">⚙</button>
-          </div>
+          <button class="nav-item" onclick="walkStep=0;showWalk()">
+            <span class="ico">?</span>Help
+          </button>
         </div>
       </aside>
-      <!-- Inbox View -->
       <div class="content" id="inboxView">
-        <div class="inbox-scroll" id="inboxScroll">
-          <div class="inbox-inner">
-            <!-- Focus bar -->
-            <div class="focus-bar" id="focusBar">
-              <div class="focus-dot"></div>
-              <span
-                >Focus Mode — <strong id="focusCount">6</strong> emails need
-                attention today</span
-              >
-              <button
-                class="btn btn-ghost"
-                style="margin-left:auto"
-                onclick="setMode('inbox')"
-              >
-                Exit Focus
-              </button>
-            </div>
-            <!-- Batch bar -->
+        <div class="focus-bar" id="focusBar">
+          <div class="dot"></div>
+          <span
+            ><strong id="focusCount">6</strong> emails need attention — let's
+            clear them</span
+          >
+          <button
+            class="btn btn-ghost"
+            style="margin-left:auto;font-size:9px;padding:2px 8px"
+            onclick="setMode('inbox')"
+          >
+            Exit
+          </button>
+        </div>
+        <div class="scroll" id="scroll">
+          <div class="inner">
             <div class="batch-bar" id="batchBar">
-              <span><span class="count" id="batchCount">0</span> selected</span>
-              <button class="btn btn-soft" onclick="batchArchive()">
-                Archive
+              <span><span class="cnt" id="batchCount">0</span> selected</span>
+              <button class="btn btn-ghost" onclick="batchDo('done')">
+                ✓ Done
               </button>
-              <button class="btn btn-soft" onclick="batchMarkRead()">
-                Mark Read
+              <button class="btn btn-ghost" onclick="batchDo('read')">
+                Read
               </button>
-              <button class="btn btn-soft" onclick="batchFlag()">★ Flag</button>
-              <button class="btn btn-soft" onclick="batchSnooze()">
+              <button class="btn btn-ghost" onclick="batchDo('flag')">
+                ★ Flag
+              </button>
+              <button class="btn btn-ghost" onclick="batchDo('snooze')">
                 ⏰ Snooze
               </button>
               <button
-                class="btn btn-soft"
-                onclick="clearSelection()"
+                class="btn btn-ghost"
+                onclick="clearSel()"
                 style="margin-left:auto"
               >
                 Clear
               </button>
             </div>
-            <!-- Inbox header -->
-            <div class="inbox-top">
+            <div class="inbox-head">
               <div>
                 <span class="inbox-title" id="inboxTitle">Inbox</span
-                ><span class="inbox-sub" id="inboxSub"> 26 conversations</span>
+                ><span class="inbox-sub" id="inboxSub">
+                  · 26 conversations</span
+                >
               </div>
             </div>
-            <!-- Toolbar -->
             <div class="toolbar" id="toolbar">
               <button
-                class="btn btn-soft"
-                onclick="selectAll()"
-                title="Select all"
+                class="btn btn-ghost"
+                onclick="toggleSelectAll()"
+                id="selAllBtn"
+                data-tip="Select all (X)"
               >
                 ☐ All
               </button>
               <button
-                class="btn btn-soft"
+                class="btn btn-ghost"
                 onclick="markAllRead()"
-                title="Mark all as read"
+                data-tip="Mark everything read"
               >
-                ✓ Read
+                ✓ Read all
               </button>
               <div class="toolbar-sep"></div>
               <button
-                class="btn btn-soft"
+                class="btn btn-ghost on"
                 onclick="setFilter('all')"
                 id="filtAll"
+                data-tip="Show everything"
               >
                 All
               </button>
               <button
-                class="btn btn-soft"
+                class="btn btn-ghost"
                 onclick="setFilter('unread')"
                 id="filtUnread"
+                data-tip="Only unread"
               >
                 Unread
               </button>
               <button
-                class="btn btn-soft"
+                class="btn btn-ghost"
                 onclick="setFilter('urgent')"
                 id="filtUrgent"
+                data-tip="Urgent only"
               >
                 Urgent
               </button>
               <div class="toolbar-sep"></div>
-              <select
-                id="snoozeQuick"
-                onchange="quickSnooze(this.value)"
-                style="font-size:11px;padding:3px 6px"
+              <button
+                class="btn btn-ghost"
+                onclick="setFilter('today')"
+                id="filtToday"
               >
-                <option value="">⏰ Snooze...</option>
-                <option value="later">Later today</option>
-                <option value="tomorrow">Tomorrow</option>
-                <option value="weekend">This weekend</option>
-                <option value="week">Next week</option>
-              </select>
+                Today
+              </button>
             </div>
             <div id="threadList"></div>
-            <div class="pagination" id="pagination">
-              <button id="prevBtn" onclick="prevPage()">← Prev</button>
-              <span class="pagination-label" id="pageLabel"></span>
+            <div class="pg" id="pagination">
+              <button id="prevBtn" onclick="prevPage()">← Back</button>
+              <span class="pg-l" id="pageLabel"></span>
               <button id="nextBtn" onclick="nextPage()">Next →</button>
             </div>
           </div>
         </div>
       </div>
-      <!-- Detail -->
-      <div class="detail" id="threadDetail">
-        <div class="detail-header" id="detailHeader"></div>
-        <div class="detail-body" id="detailBody">
-          <div class="quick-reply" id="quickReply">
-            <textarea
-              id="replyText"
-              placeholder="Quick reply... (Enter to send, Shift+Enter for new line)"
-              rows="2"
-            ></textarea>
-            <div class="quick-reply-foot">
-              <div class="quick-snippets">
-                <button onclick="insertSnippet('Thanks, noted!')">Noted</button>
-                <button
-                  onclick="insertSnippet('Will review and get back to you.')"
-                >
-                  Will review
-                </button>
-                <button onclick="insertSnippet('On it.')">On it</button>
-                <button onclick="insertSnippet('Looks good to me.')">
-                  LGTM
-                </button>
-                <button
-                  onclick="insertSnippet('Can we discuss in tomorrow\'s standup?')"
-                >
-                  Standup
-                </button>
-              </div>
-              <button class="btn btn-primary" onclick="sendQuickReply()">
-                Send →
-              </button>
-            </div>
-          </div>
+      <div class="detail" id="detail">
+        <div class="detail-head" id="detailHead"></div>
+        <div class="detail-body" id="detailBody"></div>
+      </div>
+    </div>
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <span id="toastMsg"></span>
+      <button id="toastBtn" onclick="toastUndo()">Undo</button>
+    </div>
+    <!-- Compose -->
+    <div class="compose" id="compose">
+      <div class="compose-inner">
+        <div class="compose-head">
+          <h3>New Message</h3>
+          <button onclick="hideCompose()">✕</button>
+        </div>
+        <input placeholder="To: recipient@example.com" />
+        <input placeholder="Subject: What's this about?" />
+        <textarea placeholder="Write your message..."></textarea>
+        <div class="compose-foot">
+          <button class="btn btn-ghost" onclick="hideCompose()">Discard</button>
+          <button
+            class="btn btn-primary"
+            onclick="hideCompose();toast('Message sent')"
+          >
+            Send →
+          </button>
         </div>
       </div>
     </div>
-    <!-- Undo bar -->
-    <div class="undo-bar" id="undoBar">
-      <span id="undoMsg">Conversation archived</span>
-      <button onclick="undoLast()">Undo</button>
+    <!-- Walkthrough -->
+    <div class="walk" id="walk">
+      <div class="walk-bg" onclick="hideWalk()"></div>
+      <div class="walk-card">
+        <div class="icon" id="walkIcon">👋</div>
+        <h2 id="walkTitle">Welcome to Zero</h2>
+        <p id="walkDesc">
+          A faster way to process your email. Let's show you around — it'll take
+          10 seconds.
+        </p>
+        <div class="steps" id="walkSteps">
+          <div class="dot on"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <button class="btn btn-primary" id="walkBtn" onclick="nextWalk()">
+          Next →
+        </button>
+      </div>
     </div>
-    <!-- Snooze dropdown -->
-    <div class="snooze-dropdown" id="snoozeDropdown">
-      <button class="snooze-item" onclick="snoozeThread('later')">
-        ⏰ Later today
-      </button>
-      <button class="snooze-item" onclick="snoozeThread('tomorrow')">
-        🌅 Tomorrow morning
-      </button>
-      <button class="snooze-item" onclick="snoozeThread('weekend')">
-        🎉 This weekend
-      </button>
-      <button class="snooze-item" onclick="snoozeThread('week')">
-        📅 Next week
-      </button>
-      <button class="snooze-item" onclick="snoozeThread('month')">
-        🌙 Next month
-      </button>
-    </div>
-    <!-- Shortcuts overlay -->
-    <div class="shortcuts-overlay" id="shortcutsOverlay">
-      <div class="shortcuts-bg" onclick="hideShortcuts()"></div>
-      <div class="shortcuts-card">
-        <h3>⌨ Keyboard Shortcuts</h3>
-        <div class="grid">
-          <div class="k"><code>J</code><span>Next email</span></div>
-          <div class="k"><code>K</code><span>Previous email</span></div>
-          <div class="k"><code>E</code><span>Archive</span></div>
-          <div class="k"><code>R</code><span>Reply</span></div>
-          <div class="k"><code>S</code><span>Snooze</span></div>
-          <div class="k"><code>F</code><span>Flag</span></div>
-          <div class="k"><code>N</code><span>New compose</span></div>
-          <div class="k"><code>/</code><span>Search</span></div>
-          <div class="k"><code>X</code><span>Select</span></div>
-          <div class="k"><code>U</code><span>Mark unread</span></div>
-          <div class="k"><code>M</code><span>Mute</span></div>
-          <div class="k"><code>?</code><span>Shortcuts</span></div>
-          <div class="k"><code>Esc</code><span>Back / Close</span></div>
-          <div class="k"><code>.</code><span>Focus mode</span></div>
+    <!-- Shortcuts -->
+    <div class="sc-over" id="scOver">
+      <div class="sc-bg" onclick="hideShortcuts()"></div>
+      <div class="sc-card">
+        <h3>Keyboard shortcuts</h3>
+        <div class="sc-grid">
+          <div class="sc-k"><kbd>J</kbd><span>Next</span></div>
+          <div class="sc-k"><kbd>K</kbd><span>Previous</span></div>
+          <div class="sc-k"><kbd>E</kbd><span>Done ✓</span></div>
+          <div class="sc-k"><kbd>R</kbd><span>Reply</span></div>
+          <div class="sc-k"><kbd>S</kbd><span>Snooze</span></div>
+          <div class="sc-k"><kbd>F</kbd><span>Flag</span></div>
+          <div class="sc-k"><kbd>N</kbd><span>Compose</span></div>
+          <div class="sc-k"><kbd>X</kbd><span>Select</span></div>
+          <div class="sc-k"><kbd>U</kbd><span>Unread</span></div>
+          <div class="sc-k"><kbd>/</kbd><span>Search</span></div>
+          <div class="sc-k"><kbd>.</kbd><span>Focus mode</span></div>
+          <div class="sc-k"><kbd>I</kbd><span>Back to inbox</span></div>
+          <div class="sc-k"><kbd>?</kbd><span>This menu</span></div>
+          <div class="sc-k"><kbd>Esc</kbd><span>Back</span></div>
         </div>
       </div>
     </div>
-
     <script>
-      // ─── Data ──────────────────────────────────────────────────
-      const SENDERS = [
+      // ─── DATA ──────────────────────────────────────────────────
+      const AVS = [
         ["Stripe", "#635bff"],
         ["Notion", "#000"],
         ["Slack", "#4a154b"],
@@ -1441,7 +1713,7 @@
         ["Calendly", "#006bff"],
         ["Intercom", "#1f8ded"],
         ["Posthog", "#000"],
-        ["David (Personal)", "#16a34a"],
+        ["David", "#16a34a"],
         ["Kate Chen", "#db2777"],
         ["Marcus Webb", "#7c3aed"],
         ["Jenny Tran", "#0891b2"],
@@ -1459,203 +1731,203 @@
         ["Miguel Torres", "#4f46e5"],
         ["Sanjay Gupta", "#7c3aed"]
       ];
-      const EMAILS = [
+      const MSGS = [
         {
           f: "Stripe",
           s: "Your weekly invoice is ready",
           b:
-            "Hi David,\n\nYour latest Stripe invoice for £247.50 is now available.\n\n• Processing fees: £32.40\n• Subscription (Pro): £199.00\n• Add-ons: £16.10\n\nDue: May 5, 2026\n\n— Stripe",
+            "Hi David,\n\nYour latest Stripe invoice for £247.50 is available.\n\n• Processing fees: £32.40\n• Subscription (Pro): £199.00\n• Add-ons: £16.10\n\nDue: May 5, 2026\n\n— Stripe",
           t: "bill"
         },
         {
           f: "Notion",
           s: "Sarah Kim joined workspace",
           b:
-            'Hi David,\n\nSarah Kim has been added to the "PlateLogic" workspace.\n\nRole: Editor\n\n— Notion',
-          t: "progress"
+            'Hi David,\n\nSarah Kim has been added to the "PlateLogic" workspace.\nRole: Editor\n\n— Notion',
+          t: "pr"
         },
         {
           f: "Slack",
-          s: "Product sync tomorrow 3pm",
+          s: "Product sync tomorrow at 3pm",
           b:
             "Hey team,\n\nReminder: weekly product sync tomorrow at 3pm.\n\nTopics:\n• Sprint review\n• Customer feedback\n• Q3 roadmap\n\n—Tom"
         },
         {
           f: "Kate Chen",
-          s: "Dark mode export request",
+          s: "Dark mode export — request",
           b:
-            "Hey David,\n\n3 customer requests this week for dark mode in PDF exports. Can we fit it in next sprint?\n\nKate",
-          t: "review"
+            "Hey David,\n\n3 customer requests this week for dark mode in PDF exports.\n\nCan we fit it in next sprint?\n\nKate",
+          t: "rv"
         },
         {
           f: "Vercel",
-          s: "Production deploy: onboard v2 ✅",
+          s: "Deploy: onboarding v2 ✅",
           b:
-            "Deployment succeeded.\n\nProject: platelogic-web\nCommit: 7a3f8e2\n\n✅ Live at https://platelogic.vercel.app",
-          t: "progress"
+            "Deployment succeeded.\n\nProject: platelogic-web\nCommit: 7a3f8e2 — Fix auth race\n\n✅ Live at platelogic.vercel.app",
+          t: "pr"
         },
         {
           f: "GitHub",
-          s: "PR #247: Fix auth race condition",
+          s: "PR #247: Fix auth race",
           b:
-            "@david-platelogic requested your review on #247\n\nFix auth race condition — adds mutex and retry for concurrent auth requests.\n\n<a>https://github.com/platelogic/scraper/pull/247</a>",
-          t: "review"
+            "@david-platelogic requested your review on #247\n\nAdds mutex + retry for concurrent auth requests.\n\n<a>https://github.com/platelogic/scraper/pull/247</a>",
+          t: "rv"
         },
         {
           f: "Figma",
-          s: "Comments on Q2 Growth Strategy",
+          s: "Comments on Q2 Strategy",
           b:
-            'Marcus Webb commented: "Love the onboarding flow. A/B test step 3?"\n\n<a>https://figma.com/file/q2-growth</a>',
-          t: "review"
+            'Marcus Webb: "Love the onboarding flow. Should we test step 3?"\n\n<a>https://figma.com/file/q2-growth</a>',
+          t: "rv"
         },
         {
           f: "Calendly",
           s: "Design review — Thursday 2pm",
-          b:
-            "📅 New Event\n\nDesign Review — Q2 Refresh\nThu May 1 · 2pm GMT+1\n\n— Calendly"
+          b: "📅 New event\n\nDesign Review — Q2 Refresh\nThu May 1 · 2pm GMT+1"
         },
         {
           f: "Marcus Webb",
-          s: "Onboarding flow — feedback",
+          s: "Onboarding flow — thoughts",
           b:
-            "Hey David,\n\nMy notes on the new onboarding:\n\n👍 Progress indicator great\n🤔 Step 3 too many questions\n\nWant me to mock an alternative?\n\nMarcus"
+            "Hey David,\n\n👍 Progress indicator is great\n🤔 Step 3 asks too many questions\n\nWant me to mock an alternative?\n\nMarcus"
         },
         {
           f: "Intercom",
           s: "5 new signups this week",
           b:
-            "📊 Weekly Roundup\n\nNew subscribers: 5\n• 3 from Google Ads\n• 2 from word-of-mouth\n\n<a>https://app.intercom.com/reports</a>"
+            "📊 Weekly roundup\n\nNew: 5 subscribers\n• 3 from Google Ads\n• 2 from word-of-mouth\n\n<a>https://app.intercom.com</a>"
         },
         {
           f: "Jenny Tran",
-          s: "A/B test: v2 wins 🎯",
+          s: "A/B test: v2 wins! 🎯",
           b:
-            "Hey David,\n\nResults from 247 users:\n\nCompletion: 62% → 78% 🎯\nTime: 4.2m → 2.8m ✅\nNPS: 32 → 47 💪\n\nRolling out to all users next week.\n\nJenny",
-          t: "progress"
+            "Hey David,\n\n247 users:\n\nCompletion: 62% → 78% 🎯\nTime: 4.2m → 2.8m ✅\nNPS: 32 → 47 💪\n\nRolling out next week.\n\nJenny",
+          t: "pr"
         },
         {
           f: "Security Bot",
           s: "New login from Dublin",
           b:
-            "🔐 Security Alert\n\nDevice: Chrome on Windows\nLocation: Dublin, Ireland\nTime: Apr 28, 2026 22:15 GMT+1\n\n<a>Secure → https://platelogic.app/security</a>",
-          t: "urgency"
+            "🔐 Security alert\n\nNew login:\n• Chrome on Windows\n• Dublin, Ireland\n• 10:15 PM GMT+1\n\nIf this wasn't you, secure your account.\n\n<a>https://platelogic.app/security</a>",
+          t: "ur"
         },
         {
           f: "Linear",
-          s: "Sprint retro — Apr 28",
+          s: "Sprint retro notes",
           b:
-            "📋 Retro Notes\n\n✅ Onboarding v2 (78% complete)\n✅ 12 bugs resolved\n\n⚠️ PR turnaround 18h avg\n⚠️ Test coverage at 67%"
+            "📋 Sprint retro\n\n✅ Onboarding v2 (78% completion)\n✅ 12 bugs resolved\n\n⚠️ PR turnaround: 18h avg\n⚠️ Test coverage: 67%\n\n— Linear"
         },
         {
           f: "Sarah Kim",
-          s: "Pricing page — review?",
+          s: "Pricing page — your eyes?",
           b:
             "Hi David,\n\nUpdated pricing:\n• Starter: €79/mo\n• Pro: €199/mo (new)\n• Enterprise: Custom\n\n<a>Preview → https://platelogic.app/pricing?preview</a>",
-          t: "review"
+          t: "rv"
         },
         {
           f: "Intercom",
-          s: "Ticket #4281 — Data not syncing",
+          s: "Ticket #4281: data not syncing",
           b:
-            '🎫 High Priority\n\nCustomer: Clayton Hotel Cork\n"Tablet stopped syncing data — 4 meals not appearing"\n\nResponse needed within 2 hours.\n\n<a>View → https://app.intercom.com/tickets/4281</a>',
-          t: "urgency"
+            '🎫 High priority\n\nCustomer: Clayton Hotel Cork\n"Tablet stopped syncing — 4 meals not appearing"\n\nResponse needed within 2h.\n\n<a>View → https://app.intercom.com/tickets/4281</a>',
+          t: "ur"
         },
         {
           f: "Amit Patel",
           s: "Q3 tools budget — £2,400",
           b:
-            "Hi David,\n\nNeed approval:\n• Linear upgrade: £600\n• Sentry Pro: £800\n• Notion AI: £480\n• Misc: £520\n\nAmit",
-          t: "bill"
+            "Hi David,\n\nNeed sign-off:\n• Linear upgrade: £600\n• Sentry Pro: £800\n• Notion AI: £480\n• Misc: £520\n\nAmit",
+          t: "bl"
         },
         {
           f: "Stripe",
-          s: "Payout: €1,892.40",
+          s: "Payout processed: €1,892.40",
           b:
-            "Payout processed.\n\nAmount: €1,892.40\nDestination: ****4242\n\n— Stripe",
-          t: "bill"
+            "Payout notification\n\nAmount: €1,892.40\nDestination: ****4242\n\n— Stripe",
+          t: "bl"
         },
         {
           f: "Rachel Lee",
           s: "Interview: Clayton Hotel Cork",
           b:
-            "Hi David,\n\nKey takeaways:\n• Manual paper logs 🤯\n• 3h/week data entry\n• No software solution\n• Budget ~€200/mo\n\nThey want a demo next week!",
-          t: "review"
+            "Hi David,\n\nKey takeaways:\n• Paper logs still 🤯\n• 3h/week data entry\n• No software\n• Budget ~€200/mo\n\nThey want a demo!",
+          t: "rv"
         },
         {
           f: "Posthog",
           s: "Retention dropped 8%",
           b:
-            "📊 Alert\n\nRetention: 72% → 64%\n\nPossible causes:\n• Recent deployment bug\n• New signups not completing onboarding\n\n<a>Dashboard</a>",
-          t: "urgency"
+            "📊 Alert\n\nRetention: 72% → 64%\n\nPossible:\n• Recent bug\n• New users not onboarding\n\n<a>Dashboard → link</a>",
+          t: "ur"
         },
         {
           f: "Nina Eriksson",
           s: "Hotel partnership deck",
           b:
-            'Hey David,\n\nDrafted pitch:\n"Reduce food waste 30% in 90 days"\n\nReview before I send to procurement?\n\nNina',
-          t: "review"
+            'Hey David,\n\nDraft pitch:\n"Reduce food waste 30% in 90 days or it\'s free"\n\nReview before I send?\n\nNina',
+          t: "rv"
         },
         {
           f: "Notion",
           s: "Q2 OKRs — due Friday",
           b:
-            "⏰ Reminder\n\nPlease update:\nKR1: 14/20 hotels (70%)\nKR2: 2.4h avg response\nKR3: API v2 in progress\n\n<a>https://notion.so/platelogic/okrs</a>"
+            "⏰ Reminder\n\nPlease update:\nKR1: 14/20 hotels (70%)\nKR2: 2.4h avg response\nKR3: API v2 in progress\n\n<a>https://notion.so/platelogic/okrs</a>",
+          t: "pr"
         },
         {
           f: "Sanjay Gupta",
-          s: "API rate limits — proposal",
+          s: "API rate limits proposal",
           b:
-            "Hey David,\n\nPeak: 1,200 req/min (limit 1,000)\nHitting limits 3x/week.\n\nProposal: Increase Pro limit to 2,000."
+            "Hey David,\n\nPeak usage: 1,200 req/min (limit is 1,000)\nHitting limits 3x/week.\n\nProposal: increase Pro limit to 2,000."
         },
         {
           f: "Tom Adams",
           s: "Launch checklist v3 — help!",
           b:
-            "Hey David,\n\nNeed your input on:\n[ ] In-app walkthrough copy\n[ ] Rollout schedule\n\nEOD Wednesday?\n\nTom"
+            "Hey David,\n\nNeed input on:\n[ ] In-app walkthrough copy\n[ ] Rollout schedule\n\nEOD Wednesday?\n\nTom"
         },
         {
           f: "David (Personal)",
-          s: "Dentist Thu 11am",
+          s: "Dentist Thursday 11am",
           b:
-            "Hey you,\n\nDentist appointment Thursday 11am with Dr. O'Brien on Patrick Street.\n\nDon't forget! 😬"
+            "Hey,\n\nYou've got the dentist Thursday 11am — Dr. O'Brien on Patrick Street.\n\nDon't forget! 😬"
         },
         {
           f: "Alice Foster",
           s: "The Montenotte Hotel — lead",
           b:
-            "Hey David,\n\nClient has 3 hotels in Cork, spending ~€18K/yr on food waste disposal.\n\nFree for a 15-min intro call?\n\nAlice",
-          t: "review"
+            "Hey David,\n\nClient: 3 hotels in Cork\nSpending ~€18K/yr on waste disposal.\n\n15-min intro call this week?\n\nAlice",
+          t: "rv"
         },
         {
           f: "Hugo Chang",
-          s: "Docs site redesign — mockups",
+          s: "Docs redesign — mockups",
           b:
             "Hi David,\n\nFirst pass: sticky sidebar, better search, dark mode.\n\n<a>https://figma.com/file/docs-redesign</a>"
         },
         {
           f: "Miguel Torres",
-          s: "Apple OAuth 400 error",
+          s: "Apple OAuth: 400 error",
           b:
-            "Hi David,\n\nAll flows pass except Apple OAuth (400 on callback). Odd URI mismatch.\n\nInvestigating tomorrow.\n\nMiguel"
+            "Hi David,\n\nAll flows pass except Apple OAuth (400 on callback).\n\nLooking into it tomorrow.\n\nMiguel"
         },
         {
           f: "Elena Popescu",
           s: "Dashboard feedback",
           b:
-            "Hey David,\n\n• Waste trend: want week-over-week %\n• Hotel comparison: filter by group\n• Export: CSV for date range\n\n<a>Loom: https://loom.com/share/dash</a>"
+            "Hey David,\n\n• Waste trend: want week-over-week %\n• Hotel comparison: group filter\n• Export: CSV for date range\n\n<a>Loom: https://loom.com/share/dash</a>"
         },
         {
           f: "GitHub",
-          s: "Issue #312: PDF crash Safari",
+          s: "Issue #312: PDF crash on Safari",
           b:
-            "Bug: PDF export crashes Safari 18+\n\nLikely date parsing issue. Works on Chrome/Firefox.\n\n<a>https://github.com/platelogic/webapp/issues/312</a>",
-          t: "urgency"
+            "Bug: PDF export crashes Safari 18+\n\nLikely a date parsing issue.\nChrome & Firefox work fine.\n\n<a>https://github.com/platelogic/webapp/issues/312</a>",
+          t: "ur"
         },
         {
           f: "Sam Wilson",
-          s: "Q3: Hotel Group tier proposal",
+          s: "Q3: Hotel Group tier",
           b:
-            "David,\n\nProblem: Hotel groups want consolidated dashboards, not per-hotel.\n\nProposal:\n• Multi-property dashboard\n• Group reports\n• Unified billing\n\nCould unlock 10+ deals.\n\nSam"
+            "David,\n\nProblem: hotel groups want consolidated dashboards, not per-hotel.\n\nProposal:\n• Multi-property dashboard\n• Group reports\n• Unified billing\n\nCould unlock 10+ deals.\n\nSam"
         },
         {
           f: "Zoe Williams",
@@ -1671,54 +1943,44 @@
         },
         {
           f: "Liam Scott",
-          s: "White paper: AI in Hospitality",
+          s: "Whitepaper: AI in Hospitality",
           b:
-            "David,\n\nRelevant for PlateLogic positioning:\n\n• 67% of hotel groups investing in AI\n• Food waste reduction top 3 priority\n• ROI: 340% over 18 months\n\n<a>https://hospitalitytech.com/whitepaper-2026</a>"
+            "David,\n\nRelevant for PlateLogic:\n\n• 67% of hotel groups investing in AI\n• Food waste is top 3 priority\n• Avg ROI: 340% over 18 months\n\n<a>https://hospitalitytech.com/whitepaper-2026</a>"
         },
         {
           f: "Vercel",
-          s: "Staging deploy failed",
+          s: "Staging failed — 2 TS errors",
           b:
-            "❌ Build failed\n\n2 TS errors:\n• PDFExport.tsx:124 — undefined type\n• renderer.tsx:89 — missing return type\n\n<a>↻ Retry</a>",
-          t: "urgency"
+            "❌ Build failed\n\n2 TypeScript errors:\n• PDFExport.tsx:124\n• renderer.tsx:89\n\n<a>↻ Retry → link</a>",
+          t: "ur"
         },
         {
           f: "Linear",
           s: "Velocity: 78%",
           b:
-            "📊 Sprint Velocity\n\nCommitted: 14\nCompleted: 11\n\n✅ Onboarding v2 (8)\n✅ Auth fix (3)\n⏳ Dark mode (5)\n⏳ OKR dash (3)"
+            "📊 Sprint velocity\n\nCommitted: 14\nCompleted: 11\n\n✅ Onboarding v2 (8)\n✅ Auth fix (3)\n⏳ Dark mode export (5)\n⏳ OKR dashboard (3)"
         }
       ];
 
-      function category(eml, i) {
-        if (eml.t === "urgency") return "urgent";
-        if (eml.t === "bill") return "bill";
-        if (eml.t === "progress") return "progress";
-        if (eml.t === "review") return "needs";
+      function classify(eml) {
+        if (eml.t === "ur") return "urgent";
+        if (eml.t === "bl") return "bill";
+        if (eml.t === "pr") return "progress";
+        if (eml.t === "rv") return "needs";
         return "normal";
       }
-      const catLabels = {
-        urgent: "Urgent",
-        bill: "Invoice",
-        progress: "Updated",
-        needs: "Review needed",
-        normal: null
-      };
 
       // Build threads
-      const ALL = EMAILS.map((e, i) => {
-        const s = SENDERS.find(x => x[0] === e.f) || [e.f, "#666"];
+      const ALL = MSGS.map((e, i) => {
+        const a = AVS.find(x => x[0] === e.f) || [e.f, "#666"];
         const unread = Math.random() < 0.35;
         const daysAgo = Math.min(
           Math.floor(Math.random() * 12) + (i < 5 ? i : 1),
           14
         );
-        const date = new Date(
-          Date.now() - daysAgo * 86400000 - Math.floor(Math.random() * 3600000)
-        );
-        const flag = Math.random() < 0.1;
-        const cat = category(e, i);
-        const waiting = cat === "normal" && !unread && Math.random() < 0.15;
+        const date =
+          Date.now() - daysAgo * 86400000 - Math.floor(Math.random() * 3600000);
+        const cat = classify(e);
         return {
           id: i,
           from: e.f,
@@ -1727,31 +1989,30 @@
           subject: e.s,
           body: e.b,
           cat,
-          catLabel: catLabels[cat],
           tag: e.t || null,
-          date: date.getTime(),
+          ts: date,
           unread,
-          flagged: flag,
-          waiting,
-          avatarColor: s[1],
-          selected: false,
+          flagged: Math.random() < 0.1,
+          waiting: false,
+          avatarColor: a[1],
+          sel: false,
           snippet: e.b
             .split("\n")
             .slice(0, 2)
             .join(" ")
             .replace(/<[^>]+>/g, "")
-            .substring(0, 110),
+            .substring(0, 100),
           snoozed: false,
           done: false
         };
       });
-      // Manual assignments for demo realism
-      ALL[11].unread = true; // Security alert: unread
-      ALL[14].unread = true; // ticket
-      ALL[17].unread = true; // interview
-      ALL[18].unread = true; // retention
-      ALL[28].unread = true; // PDF crash
-      ALL[33].unread = true; // deploy fail
+      // Manual assignments for realism
+      ALL[11].unread = true;
+      ALL[14].unread = true;
+      ALL[17].unread = true;
+      ALL[18].unread = true;
+      ALL[28].unread = true;
+      ALL[33].unread = true;
 
       // ── State ──
       let pg = 1,
@@ -1759,21 +2020,26 @@
         folder = "inbox",
         search = "",
         selId = null,
-        mode = "inbox",
-        selected = new Set();
-      let PER = 15,
-        dbTimer = null,
-        undoStack = [];
-      let replyingTo = null;
+        mode = "inbox";
+      const PER = 15;
+      let dB = null;
+      let sel = new Set(),
+        lastSel = false;
+      let undoStack = [],
+        undoFn = null;
+      let viewing = null;
+      const WALK_KEY = "zero_walked_v2";
 
-      function filtered() {
+      // ── Helpers ──
+      function getItems() {
         let items = [...ALL];
         if (folder === "needs")
           items = items.filter(t => t.cat === "needs" || t.cat === "urgent");
         if (folder === "waiting") items = items.filter(t => t.waiting);
         if (folder === "flagged") items = items.filter(t => t.flagged);
         if (folder === "snoozed") items = items.filter(t => t.snoozed);
-        if (folder === "done") items = items.filter(t => t.done);
+        if (folder === "done")
+          items = items.filter(t => t.done || t.cat === "bill");
         if (folder === "all") {
         }
         if (search) {
@@ -1790,87 +2056,103 @@
           );
         if (filter === "unread") items = items.filter(t => t.unread);
         if (filter === "urgent") items = items.filter(t => t.cat === "urgent");
+        if (filter === "today")
+          items = items.filter(t => Date.now() - t.ts < 86400000);
         return items;
       }
 
+      function groupByTime(items) {
+        const now = Date.now(),
+          td = now - 86400000,
+          wk = now - 604800000;
+        const today = [],
+          yesterday = [],
+          week = [],
+          older = [];
+        items.forEach(t => {
+          if (t.ts > td) today.push(t);
+          else if (t.ts > td - 86400000) yesterday.push(t);
+          else if (t.ts > wk) week.push(t);
+          else older.push(t);
+        });
+        return [
+          ["Today", today],
+          ["Yesterday", yesterday],
+          ["This week", week],
+          ["Older", older]
+        ].filter(g => g[1].length);
+      }
+
+      // ── Render ──
       function render() {
-        const items = filtered();
+        const items = getItems();
         const total = items.length,
           tp = Math.ceil(total / PER) || 1;
         if (pg > tp) pg = tp;
         const start = (pg - 1) * PER,
           page = items.slice(start, start + PER);
+        const uc = ALL.filter(t => !t.done && !t.snoozed && t.unread).length;
 
-        // Sidebar counts
-        const uc = ALL.filter(t => t.unread).length;
-        [
-          "fInbox",
-          "fNeeds",
-          "fWait",
-          "fFlag",
-          "fSnooze",
-          "fDone",
-          "fAll"
-        ].forEach(k => {
-          const fn = {
-            fInbox: () => ALL.filter(t => !t.done).length,
-            fNeeds: () =>
-              ALL.filter(t => t.cat === "needs" || t.cat === "urgent").length,
-            fWait: () => ALL.filter(t => t.waiting).length,
-            fFlag: () => ALL.filter(t => t.flagged).length,
-            fSnooze: () => ALL.filter(t => t.snoozed).length,
-            fDone: () => ALL.filter(t => t.done).length,
-            fAll: () => ALL.length
-          }[k];
-          document.getElementById(k).textContent = fn();
-        });
+        // Counts
+        ["Inbox", "Needs", "Wait", "Flag", "Snooze", "Done", "All"].forEach(
+          k => {
+            const fn = {
+              Inbox: () => ALL.filter(t => !t.done).length,
+              Needs: () =>
+                ALL.filter(
+                  t => (t.cat === "needs" || t.cat === "urgent") && !t.done
+                ).length,
+              Wait: () => ALL.filter(t => t.waiting).length,
+              Flag: () => ALL.filter(t => t.flagged).length,
+              Snooze: () => ALL.filter(t => t.snoozed).length,
+              Done: () => ALL.filter(t => t.done).length,
+              All: () => ALL.length
+            }[k];
+            document.getElementById("c" + k).textContent = fn();
+          }
+        );
 
+        // Nav active
         document.querySelectorAll(".nav-item").forEach(el => {
-          el.classList.toggle(
-            "active",
-            el.textContent
+          el.classList.toggle("on", el.dataset.folder === folder);
+        });
+        document.querySelectorAll(".mode-tab").forEach(b =>
+          b.classList.toggle(
+            "on",
+            b.textContent
               .trim()
               .toLowerCase()
-              .includes(folder) ||
-              (folder === "inbox" && el.textContent === "Inbox")
-          );
-        });
-        document
-          .querySelectorAll(".mode-btn")
-          .forEach(b =>
-            b.classList.toggle(
-              "active",
-              b.textContent.toLowerCase().includes(mode)
-            )
-          );
+              .includes(mode)
+          )
+        );
 
         // Focus bar
-        const focusCount = ALL.filter(
-          t => t.cat === "urgent" || t.cat === "needs"
-        ).length;
-        document.getElementById("focusCount").textContent = focusCount;
+        const fc = ALL.filter(t => t.cat === "urgent" || t.cat === "needs")
+          .length;
+        document.getElementById("focusCount").textContent = fc;
         document
           .getElementById("focusBar")
-          .classList.toggle("show", mode === "focus");
+          .classList.toggle("on", mode === "focus");
 
         // Batch bar
-        document.getElementById("batchCount").textContent = selected.size;
+        document.getElementById("batchCount").textContent = sel.size;
         document
           .getElementById("batchBar")
-          .classList.toggle("show", selected.size > 0);
+          .classList.toggle("show", sel.size > 0);
 
         // Filter buttons
-        ["filtAll", "filtUnread", "filtUrgent"].forEach(k => {
+        ["filtAll", "filtUnread", "filtUrgent", "filtToday"].forEach(k => {
+          const f = k.replace("filt", "").toLowerCase();
           document
             .getElementById(k)
             .classList.toggle(
-              "active",
-              k.replace("filt", "").toLowerCase() === filter ||
-                (filter === "all" && k === "filtAll")
+              "on",
+              f === filter || (filter === "all" && k === "filtAll")
             );
         });
 
-        const title = {
+        // Title
+        const titles = {
           inbox: "Inbox",
           needs: "Needs Reply",
           waiting: "Waiting",
@@ -1880,380 +2162,361 @@
           all: "All Mail"
         };
         document.getElementById("inboxTitle").textContent =
-          title[folder] || "Inbox";
+          titles[folder] || "Inbox";
         document.getElementById("inboxSub").textContent = search
-          ? `"${search}" — ${total}`
-          : `${total} conversations`;
+          ? `· "${search}"`
+          : `· ${total} conversations`;
+
+        // Select all button
+        document.getElementById("selAllBtn").textContent = lastSel
+          ? "☑ All"
+          : "☐ All";
 
         const cont = document.getElementById("threadList");
         if (!page.length) {
           cont.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div><h3>All clear</h3><p>${
-            search ? "No results" : "Nothing needs your attention right now"
-          }</p></div>`;
+            search
+              ? 'No results for "' + search + '"'
+              : "Nothing here right now — nice work"
+          }</p><div class="hint">${
+            search ? "Try a different search" : "Press N to compose something"
+          }</div></div>`;
           document.getElementById("pagination").style.display = "none";
           return;
         }
         document.getElementById("pagination").style.display = "flex";
 
-        cont.innerHTML =
-          '<div class="threads">' +
-          page
-            .map(t => {
-              const inits = t.from
-                .split(" ")
-                .map(w => w[0])
-                .join("")
-                .substring(0, 2);
-              const recent = Date.now() - t.date < 172800000;
-              const ds = recent
-                ? new Date(t.date).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                  })
-                : new Date(t.date).toLocaleDateString([], {
-                    month: "short",
-                    day: "numeric"
-                  });
-              const sel = selected.has(t.id);
-              return `<div class="thread-row ${t.unread ? "unread" : ""} ${
-                t.id === selId ? "selected" : ""
-              }" onclick="selectThread(${t.id})" data-id="${t.id}">
-      <div class="cb ${
-        sel ? "checked" : ""
-      }" onclick="event.stopPropagation();toggleSelect(${t.id})"></div>
-      <div class="thread-av" style="background:${t.avatarColor}">${inits}</div>
-      <div class="thread-body">
-        <div class="thread-from">
-          ${t.from}
+        const groups = groupByTime(page);
+        cont.innerHTML = groups
+          .map(g => {
+            const [label, items] = g;
+            return `<div class="time-group">${label}</div><div class="threads">${items
+              .map(t => {
+                const inits = t.from
+                  .split(" ")
+                  .map(w => w[0])
+                  .join("")
+                  .substring(0, 2);
+                const recent = Date.now() - t.ts < 172800000;
+                const ds = recent
+                  ? new Date(t.ts).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    })
+                  : new Date(t.ts).toLocaleDateString([], {
+                      month: "short",
+                      day: "numeric"
+                    });
+                const isSel = sel.has(t.id);
+                return `<div class="thread-row ${t.unread ? "fr" : ""} ${
+                  t.done ? "done" : ""
+                } ${isSel ? "cb-active" : ""}" onclick="openThread(${
+                  t.id
+                })" data-id="${t.id}">
+        <div class="cb ${
+          isSel ? "on" : ""
+        }" onclick="event.stopPropagation();toggleSel(${
+                  t.id
+                })" data-tip="Select (X)"></div>
+        <div class="th-av" style="background:${t.avatarColor}">${inits}</div>
+        <div class="th-body">
+          <div class="th-from">${t.from}</div>
+          <div class="th-sub">${t.subject}</div>
+          <div class="th-tags">
+            ${
+              t.cat === "urgent" ? '<span class="tag urgent">Urgent</span>' : ""
+            }
+            ${
+              t.cat === "needs"
+                ? '<span class="tag review">Needs reply</span>'
+                : ""
+            }
+            ${t.cat === "bill" ? '<span class="tag bill">Invoice</span>' : ""}
+            ${t.waiting ? '<span class="tag wait">Waiting</span>' : ""}
+            ${
+              t.done
+                ? '<span class="tag" style="background:var(--green-bg);color:var(--green)">Done</span>'
+                : ""
+            }
+          </div>
+          <div class="th-snip">${t.snippet}</div>
+        </div>
+        <div class="th-meta">
+          <div class="th-date">${ds}</div>
           ${
-            t.cat === "urgent"
-              ? '<span class="thread-tag urgency">Urgent</span>'
-              : ""
-          }
-          ${
-            t.cat === "needs"
-              ? '<span class="thread-tag review">Review</span>'
-              : ""
-          }
-          ${
-            t.tag === "bill"
-              ? '<span class="thread-tag bill">Invoice</span>'
-              : ""
-          }
-          ${
-            t.waiting
-              ? '<span class="thread-tag" style="background:#f0f0f0;color:#666">Waiting</span>'
-              : ""
-          }
-          ${
-            t.done
-              ? '<span class="thread-tag" style="background:var(--green-bg);color:var(--green)">Done ✓</span>'
+            t.flagged
+              ? '<span style="color:var(--amber);font-size:8px">★</span>'
               : ""
           }
         </div>
-        <div class="thread-subject">${t.subject}</div>
-        <div class="thread-snippet">${t.snippet}</div>
-      </div>
-      <div class="thread-meta">
-        <div class="thread-date">${ds}</div>
-        ${
-          t.flagged
-            ? '<div style="color:var(--amber);font-size:10px">★</div>'
-            : ""
-        }
-      </div>
-      <div class="quick-actions">
-        <button class="qa-btn" onclick="event.stopPropagation();archiveThread(${
-          t.id
-        })" title="Archive (E)">📁</button>
-        <button class="qa-btn" onclick="event.stopPropagation();snoozeThreadFromRow(${
-          t.id
-        })" title="Snooze (S)">⏰</button>
-        <button class="qa-btn" onclick="event.stopPropagation();toggleFlag(${
-          t.id
-        })" title="Flag (F)">${t.flagged ? "★" : "☆"}</button>
-      </div>
-    </div>`;
-            })
-            .join("") +
-          "</div>";
-        document.getElementById(
-          "pageLabel"
-        ).textContent = `Page ${pg} of ${tp}`;
+        <div class="qa-wrap">
+          <button class="qa-btn" onclick="event.stopPropagation();doDone(${
+            t.id
+          })" data-tip="Done (E)">✓</button>
+          <button class="qa-btn" onclick="event.stopPropagation();doSnooze(${
+            t.id
+          })" data-tip="Snooze (S)">⏰</button>
+          <button class="qa-btn" onclick="event.stopPropagation();doFlag(${
+            t.id
+          })" data-tip="Flag (F)">${t.flagged ? "★" : "☆"}</button>
+        </div>
+      </div>`;
+              })
+              .join("")}</div>`;
+          })
+          .join("");
+
+        document.getElementById("pageLabel").textContent = `${pg} of ${tp}`;
         document.getElementById("prevBtn").disabled = pg <= 1;
         document.getElementById("nextBtn").disabled = pg >= tp;
       }
 
-      // ── Selection ──
-      function toggleSelect(id) {
-        selected.has(id) ? selected.delete(id) : selected.add(id);
-        render();
-      }
-      function selectAll() {
-        const items = filtered();
-        items.forEach((t, i) => {
-          if (i < pg * PER && i >= (pg - 1) * PER) selected.add(t.id);
-        });
-        render();
-      }
-      function clearSelection() {
-        selected.clear();
-        render();
-      }
-      function batchArchive() {
-        const ids = [...selected];
-        ids.forEach(id => {
-          const t = ALL.find(x => x.id === id);
-          if (t) {
-            t.unread = false;
-            t.done = true;
-          }
-        });
-        const msg = ids.length + " conversations archived";
-        selected.clear();
-        showUndo(msg, () => {
-          ids.forEach(id => {
-            const t = ALL.find(x => x.id === id);
-            if (t) t.done = false;
-          });
-        });
-        render();
-      }
-      function batchMarkRead() {
-        [...selected].forEach(id => {
-          const t = ALL.find(x => x.id === id);
-          if (t) t.unread = false;
-        });
-        selected.clear();
-        render();
-      }
-      function batchFlag() {
-        [...selected].forEach(id => {
-          const t = ALL.find(x => x.id === id);
-          if (t) t.flagged = !t.flagged;
-        });
-        selected.clear();
-        render();
-      }
-      function batchSnooze() {
-        [...selected].forEach(id => {
-          const t = ALL.find(x => x.id === id);
-          if (t) {
-            t.snoozed = true;
-            t.unread = false;
-          }
-        });
-        const msg = selected.size + " conversations snoozed";
-        selected.clear();
-        showUndo(msg, () => {
-          [...selected].forEach(id => {
-            const t = ALL.find(x => x.id === id);
-            if (t) t.snoozed = false;
-          });
-        });
-        render();
-      }
-      function quickSnooze(val) {
-        if (!val) return;
-        const items = filtered().filter(
-          t => t.unread || t.cat === "urgent" || t.cat === "needs"
-        );
-        items.forEach(t => {
-          t.snoozed = true;
-          t.unread = false;
-        });
-        document.getElementById("snoozeQuick").value = "";
-        const n = items.length;
-        showUndo(n + " conversations snoozed");
-        render();
-      }
-
-      // ── Thread actions ──
-      function selectThread(id) {
+      // ── Thread interaction ──
+      function openThread(id) {
         const t = ALL.find(x => x.id === id);
         if (!t) return;
-        selId = id;
         t.unread = false;
-        // Detail view
-        document.getElementById("app").classList.add("threading");
+        selId = id;
+        document.getElementById("app").classList.add("detail-open");
         document.getElementById("inboxView").style.display = "none";
-        document.getElementById("threadDetail").classList.add("active");
-
-        const s = SENDERS.find(x => x[0] === t.from) || [t.from, "#666"];
+        document.getElementById("detail").classList.add("on");
+        const s = AVS.find(x => x[0] === t.from) || [t.from, "#666"];
         const inits = t.from
           .split(" ")
           .map(w => w[0])
           .join("")
-          .substring(0, 2);
-        const fd = new Date(t.date).toLocaleDateString([], {
+          .substring(0, 2)
+          .toUpperCase();
+        const fd = new Date(t.ts).toLocaleDateString([], {
           weekday: "long",
           month: "long",
           day: "numeric",
-          year: "numeric",
           hour: "2-digit",
           minute: "2-digit"
         });
         const idx = ALL.indexOf(t);
-        replyingTo = t;
+        viewing = t;
 
-        const catAction =
-          t.cat === "urgent"
-            ? '<span class="thread-tag urgency">Urgent</span>'
-            : t.cat === "needs"
-            ? '<span class="thread-tag review">Needs Reply</span>'
-            : "";
-
-        document.getElementById("detailHeader").innerHTML = `
+        document.getElementById("detailHead").innerHTML = `
     <div class="detail-nav">
-      <button class="detail-back" onclick="showInbox()">← Back${catAction}</button>
-      <div class="detail-nav-right">
-        <button class="detail-nav-btn" onclick="openThreadById(${
+      <button class="detail-back" onclick="goHome()">← All ${folder}</button>
+      <div class="detail-nav-r">
+        <button class="detail-nav-btn" onclick="openThread(${
           ALL.at((idx - 1 + ALL.length) % ALL.length).id
         })" ${idx === 0 ? "disabled" : ""}>←</button>
-        <button class="detail-nav-btn" onclick="openThreadById(${
+        <button class="detail-nav-btn" onclick="openThread(${
           ALL.at((idx + 1) % ALL.length).id
         })" ${idx === ALL.length - 1 ? "disabled" : ""}>→</button>
       </div>
     </div>
-    <div class="detail-subject">${t.subject}</div>
-    <div class="detail-actions">
-      <button class="btn btn-primary" onclick="openReply()">✉ Reply</button>
-      <button class="btn btn-soft" onclick="archiveThread(${
+    <div class="detail-subj">${t.subject}</div>
+    <div class="detail-acts">
+      <button class="btn btn-primary" onclick="qrOpen()">✉ Reply</button>
+      <button class="btn btn-soft" onclick="doDone(${
         t.id
-      });showInbox()">📁 Archive</button>
-      <button class="btn btn-soft" onclick="snoozeFromDetail()">⏰ Snooze</button>
-      <button class="btn btn-soft" onclick="toggleFlag(${t.id});render()">${
+      });goHome()">✓ Done</button>
+      <button class="btn btn-soft" onclick="doSnooze(${
+        t.id
+      });goHome()">⏰ Snooze</button>
+      <button class="btn btn-soft" onclick="doFlag(${t.id})">${
           t.flagged ? "★ Unflag" : "☆ Flag"
         }</button>
-      <button class="btn btn-soft" onclick="markDone(${
-        t.id
-      });showInbox()">✓ Done</button>
     </div>
   `;
 
-        let bh = `<div class="detail-sender"><div class="detail-sender-av" style="background:${t.avatarColor}">${inits}</div><div class="detail-sender-info"><div class="detail-sender-name">${t.from}</div><div class="detail-sender-meta">${t.fromEmail} · ${fd}</div></div></div><div class="detail-text">`;
+        let h = `<div class="detail-sender"><div class="detail-sav" style="background:${t.avatarColor}">${inits}</div><div class="detail-sinfo"><div class="detail-sname">${t.from}</div><div class="detail-sm">${t.fromEmail} · ${fd}</div></div></div><div class="detail-text">`;
         const lines = t.body.split("\n");
-        let inQ = false;
-        for (const line of lines) {
-          const tr = line.trim();
+        let iq = false;
+        for (const ln of lines) {
+          const tr = ln.trim();
           if (
             tr.startsWith(">") ||
             (tr.startsWith("On ") && tr.includes("wrote:"))
           ) {
-            if (!inQ) {
-              bh += '<div class="quote">';
-              inQ = true;
+            if (!iq) {
+              h += '<div class="q">';
+              iq = true;
             }
-            bh += tr.replace(/^>\s?/, "") + "<br>";
+            h += tr.replace(/^>\s?/, "") + "<br>";
             continue;
           }
-          if (inQ) {
-            bh += "</div>";
-            inQ = false;
+          if (iq) {
+            h += "</div>";
+            iq = false;
           }
           if (!tr) {
-            bh += "<br>";
+            h += "<br>";
             continue;
           }
           if (tr.startsWith("•")) {
-            bh += '<div class="bullet">' + tr + "</div>";
+            h += '<div class="b">' + tr + "</div>";
             continue;
           }
           if (tr.startsWith("<a>")) {
             const m = tr.match(/<a>([^<]+)<\/a>/);
-            bh += m
-              ? '<div style="margin:6px 0"><a href="' +
-                m[1] +
-                '" style="color:var(--accent);text-decoration:none;font-size:12px" target="_blank">' +
+            h += m
+              ? '<div style="margin:4px 0"><a href="#" style="color:var(--accent);font-size:11px">' +
                 m[1] +
                 "</a></div>"
               : "<p>" + tr + "</p>";
             continue;
           }
           if (tr.match(/^[─=]{3,}/)) {
-            bh += '<div class="divider">─ ─ ─ ─</div>';
+            h +=
+              '<div style="color:var(--border);font-size:8px;margin:4px 0">─ ─ ─ ─</div>';
             continue;
           }
           if (tr.startsWith("—")) {
-            bh += '<div class="sig">' + tr + "</div>";
+            h += '<div class="sig">' + tr + "</div>";
             continue;
           }
-          bh += "<p>" + tr + "</p>";
+          h += "<p>" + tr + "</p>";
         }
-        if (inQ) bh += "</div>";
-        bh += "</div>";
-        document.getElementById("detailBody").innerHTML =
-          bh +
-          '<div class="quick-reply show"><textarea id="replyText" placeholder="Quick reply... (⌘+Enter to send)" rows="2"></textarea><div class="quick-reply-foot"><div class="quick-snippets"><button onclick="insertSnippet(\'Thanks, noted!\')">Noted</button><button onclick="insertSnippet(\'Will review and get back to you.\')">Will review</button><button onclick="insertSnippet(\'On it.\')">On it</button><button onclick="insertSnippet(\'Looks good.\')">LGTM</button></div><button class="btn btn-primary" onclick="sendQuickReply()">Send →</button></div></div>';
+        if (iq) h += "</div>";
+        h += `</div>
+    <div class="qr on">
+      <textarea id="qrText" placeholder="Quick reply..." rows="2"></textarea>
+      <div class="qr-foot">
+        <div class="qr-snippets">
+          <button onclick="insSnip('Thanks, noted!')">Noted</button>
+          <button onclick="insSnip('Will review and get back to you.')">Will review</button>
+          <button onclick="insSnip('On it.')">On it</button>
+          <button onclick="insSnip('Looks good.')">LGTM</button>
+          <button onclick="insSnip('Let\'s discuss in standup.')">Standup</button>
+        </div>
+        <button class="btn btn-primary" onclick="sendQR()">Send</button>
+      </div>
+    </div>`;
+        document.getElementById("detailBody").innerHTML = h;
         document.getElementById("detailBody").scrollTop = 0;
         window.location.hash = "thread/" + id;
       }
 
-      function openThreadById(id) {
-        selId = null;
-        selectThread(id);
-      }
-      function showInbox() {
-        document.getElementById("app").classList.remove("threading");
-        document.getElementById("threadDetail").classList.remove("active");
+      function goHome() {
+        document.getElementById("app").classList.remove("detail-open");
+        document.getElementById("detail").classList.remove("on");
         document.getElementById("inboxView").style.display = "flex";
         render();
         window.location.hash = "";
-      }
-      function openReply() {
-        document.getElementById("replyText").focus();
+        viewing = null;
       }
 
-      function archiveThread(id) {
+      // ── Quick reply ──
+      function qrOpen() {
+        setTimeout(() => {
+          const el = document.getElementById("qrText");
+          if (el) el.focus();
+        }, 50);
+      }
+      function insSnip(t) {
+        const el = document.getElementById("qrText");
+        if (el) {
+          el.value = t;
+          el.focus();
+        }
+      }
+      function sendQR() {
+        if (!viewing) return;
+        viewing.waiting = true;
+        toast("Reply sent");
+        goHome();
+      }
+      // ── Selection ──
+      function toggleSel(id) {
+        sel.has(id) ? sel.delete(id) : sel.add(id);
+        lastSel =
+          sel.size ===
+          getItems().slice((pg - 1) * PER, (pg - 1) * PER + PER).length;
+        render();
+      }
+      function toggleSelectAll() {
+        const page = getItems().slice((pg - 1) * PER, (pg - 1) * PER + PER);
+        if (sel.size === page.length) {
+          sel.clear();
+          lastSel = false;
+        } else {
+          page.forEach(t => sel.add(t.id));
+          lastSel = true;
+        }
+        render();
+      }
+      function clearSel() {
+        sel.clear();
+        lastSel = false;
+        render();
+      }
+
+      // ── Batch ──
+      function batchDo(action) {
+        const ids = [...sel];
+        let n = ids.length;
+        if (action === "done") {
+          ids.forEach(id => {
+            const t = ALL.find(x => x.id === id);
+            if (t) {
+              t.done = true;
+              t.unread = false;
+            }
+          });
+          sel.clear();
+          toast(n + " done");
+        }
+        if (action === "read") {
+          ids.forEach(id => {
+            const t = ALL.find(x => x.id === id);
+            if (t) t.unread = false;
+          });
+          sel.clear();
+          toast(n + " marked read");
+        }
+        if (action === "flag") {
+          ids.forEach(id => {
+            const t = ALL.find(x => x.id === id);
+            if (t) t.flagged = !t.flagged;
+          });
+          sel.clear();
+          toast("Toggled flag for " + n);
+        }
+        if (action === "snooze") {
+          ids.forEach(id => {
+            const t = ALL.find(x => x.id === id);
+            if (t) {
+              t.snoozed = true;
+              t.unread = false;
+            }
+          });
+          sel.clear();
+          toast(n + " snoozed");
+        }
+        render();
+      }
+
+      // ── Quick actions ──
+      function doDone(id) {
         const t = ALL.find(x => x.id === id);
         if (!t) return;
-        const clone = { ...t };
-        t.done = true;
+        const was = t.done;
+        t.done = !t.done;
         t.unread = false;
-        undoStack.push({ type: "archive", data: clone, id });
-        showUndo("Archived", () => {
-          const r = ALL.find(x => x.id === id);
-          if (r) {
-            r.done = clone.done;
-            r.unread = clone.unread;
-          }
+        toast(t.done ? "Done ✓" : "Undone");
+        undoStack.push(() => {
+          t.done = was;
         });
         render();
-        checkZero();
+        zeroCheck();
       }
-
-      function markDone(id) {
+      function doSnooze(id) {
         const t = ALL.find(x => x.id === id);
-        if (t) {
-          t.done = true;
-          t.unread = false;
-        }
-        render();
-        checkZero();
-      }
-
-      function snoozeThreadFromRow(id) {
-        const t = ALL.find(x => x.id === id);
-        if (t) {
-          t.snoozed = true;
-          t.unread = false;
-        }
-        showUndo("Snoozed");
+        if (!t) return;
+        t.snoozed = true;
+        t.unread = false;
+        toast("Snoozed");
         render();
       }
-
-      function snoozeFromDetail() {
-        if (replyingTo) {
-          replyingTo.snoozed = true;
-          replyingTo.unread = false;
-        }
-        showUndo("Snoozed");
-        showInbox();
-      }
-
-      function toggleFlag(id) {
+      function doFlag(id) {
         const t = ALL.find(x => x.id === id);
-        if (t) t.flagged = !t.flagged;
+        if (!t) return;
+        t.flagged = !t.flagged;
         render();
       }
 
@@ -2261,7 +2524,7 @@
         folder = f;
         pg = 1;
         search = "";
-        document.getElementById("sidebarSearchInput").value = "";
+        document.getElementById("sSearch").value = "";
         render();
       }
       function setFilter(f) {
@@ -2273,168 +2536,170 @@
         mode = m;
         pg = 1;
         render();
-        if (m === "focus" && filtered().length === 0) {
-          showUndo("Nothing needs attention — you're ahead!");
-        }
       }
       function prevPage() {
         if (pg > 1) {
           pg--;
           render();
-          document.getElementById("inboxScroll").scrollTop = 0;
+          document.getElementById("scroll").scrollTop = 0;
         }
       }
       function nextPage() {
-        const tp = Math.ceil(filtered().length / PER);
-        if (pg < tp) {
+        if (pg < Math.ceil(getItems().length / PER)) {
           pg++;
           render();
-          document.getElementById("inboxScroll").scrollTop = 0;
+          document.getElementById("scroll").scrollTop = 0;
         }
       }
       function debouncedSearch() {
-        clearTimeout(dbTimer);
-        dbTimer = setTimeout(() => {
-          search = document.getElementById("sidebarSearchInput").value;
+        clearTimeout(dB);
+        dB = setTimeout(() => {
+          search = document.getElementById("sSearch").value;
           pg = 1;
           render();
         }, 200);
       }
       function markAllRead() {
-        filtered()
+        getItems()
           .filter(t => t.unread)
           .forEach(t => (t.unread = false));
         render();
-        showUndo("All marked read");
+        toast("All marked read");
       }
 
-      // ── Quick Reply ──
-      function insertSnippet(t) {
-        const ta = document.getElementById("replyText");
-        ta.value = t;
-        ta.focus();
+      function zeroCheck() {
+        const left = ALL.filter(t => !t.done && !t.snoozed).length;
+        if (left === 0) setTimeout(showParty, 400);
       }
-      function sendQuickReply() {
-        const ta = document.getElementById("replyText");
-        if (!ta.value.trim()) return;
-        if (replyingTo) replyingTo.waiting = true;
-        showUndo("Reply sent");
-        ta.value = "";
-        if (replyingTo) {
-          replyingTo.done = true;
-          showInbox();
-        }
-      }
-      function openComposeReply() {
-        toggleCompose();
-      }
-
-      // ── Compose ──
-      function toggleCompose() {
-        const existing = document.querySelector(".compose-overlay");
-        if (existing) {
-          existing.remove();
-          return;
-        }
-        const d = document.createElement("div");
-        d.className = "compose-overlay open";
-        d.innerHTML = `<div style="background:var(--surface);border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.15);position:fixed;bottom:16px;right:16px;width:420px;max-width:calc(100vw-32px);overflow:hidden;z-index:50">
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg)">
-      <h3 style="font-size:13px;font-weight:600">New Message</h3>
-      <button onclick="this.closest('.compose-overlay').remove()" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text3)">✕</button>
-    </div>
-    <div style="padding:0 16px">
-      <input placeholder="To" style="width:100%;padding:10px 0;border:none;font-size:12px;outline:none;font-family:inherit;border-bottom:1px solid var(--border)">
-      <input placeholder="Subject" style="width:100%;padding:10px 0;border:none;font-size:12px;outline:none;font-family:inherit;border-bottom:1px solid var(--border)">
-      <textarea placeholder="Write your message..." rows="5" style="width:100%;padding:10px 0;border:none;font-size:12px;outline:none;font-family:inherit;resize:none;min-height:100px"></textarea>
-    </div>
-    <div style="display:flex;justify-content:flex-end;gap:6px;padding:10px 16px;border-top:1px solid var(--border)">
-      <button class="btn btn-ghost" onclick="this.closest('.compose-overlay').remove()">Discard</button>
-      <button class="btn btn-primary" onclick="this.closest('.compose-overlay').remove();showUndo('Message sent')">Send →</button>
-    </div>
-  </div>`;
-        document.body.appendChild(d);
-      }
-
-      // ── Undo ──
-      function showUndo(msg, fn) {
-        document.getElementById("undoMsg").textContent = msg;
-        document.getElementById("undoBar").classList.add("show");
-        undoStack.push(fn);
-        setTimeout(() => {
-          document.getElementById("undoBar").classList.remove("show");
-          undoStack = [];
-        }, 4000);
-      }
-      function undoLast() {
-        document.getElementById("undoBar").classList.remove("show");
-        const fn = undoStack.pop();
-        if (fn) fn();
-        render();
-      }
-
-      // ── Zero check ──
-      function checkZero() {
-        const needs = ALL.filter(
-          t =>
-            !t.done &&
-            !t.snoozed &&
-            (t.unread || t.cat === "urgent" || t.cat === "needs")
-        );
-        if (needs.length === 0) {
-          setTimeout(() => {
-            if (
-              confirm("🎉 Inbox Zero! You've processed everything. Celebrate?")
-            )
-              showCelebration();
-          }, 300);
-        }
-      }
-
-      function showCelebration() {
+      function showParty() {
         const d = document.createElement("div");
         d.style.cssText =
-          "position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center";
-        d.innerHTML = `<div style="position:absolute;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(4px)" onclick="this.parentElement.remove()"></div>
-    <div style="position:relative;background:var(--surface);border-radius:14px;padding:36px 44px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.15);max-width:360px;animation:fadeIn .3s">
-      <div style="font-size:56px;margin-bottom:12px">🎉</div>
-      <h2 style="font-size:22px;font-weight:800;margin-bottom:6px">Inbox Zero!</h2>
-      <p style="font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:16px">Every email handled. Every decision made. You're ahead of 94% of users.</p>
-      <div style="font-size:11px;color:var(--text2);background:var(--bg);padding:8px 12px;border-radius:8px;margin-bottom:16px">🔥 12-day streak · 142 archived this week</div>
-      <button class="btn btn-primary" onclick="this.closest('[style*=\\'z-index\\']').remove()">Keep going →</button>
+          "position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;animation:ei .4s";
+        d.innerHTML = `<div style="position:absolute;inset:0;background:rgba(0,0,0,.25);backdrop-filter:blur(4px)" onclick="this.parentElement.remove()"></div>
+    <div style="position:relative;background:var(--surface);border-radius:14px;padding:32px 36px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.12);max-width:340px;width:90vw">
+      <div style="font-size:52px;margin-bottom:8px">🎉</div>
+      <h2 style="font-size:20px;font-weight:800;margin-bottom:2px">Inbox Zero!</h2>
+      <p style="font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:12px">Everything handled. You're ahead of 94% of users.</p>
+      <div style="font-size:10px;color:var(--text2);background:var(--bg);padding:6px 10px;border-radius:6px;margin-bottom:12px">🔥 12-day streak · 142 processed this week</div>
+      <button class="btn btn-primary" onclick="this.parentElement.parentElement.remove()" style="font-size:11px;padding:6px 16px">Keep going →</button>
     </div>`;
         document.body.appendChild(d);
         // Confetti
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 50; i++) {
           const c = document.createElement("div");
-          c.style.cssText = `position:fixed;width:${4 +
-            Math.random() * 6}px;height:${4 +
-            Math.random() * 6}px;left:${Math.random() *
+          c.style.cssText = `position:fixed;width:${3 +
+            Math.random() * 5}px;height:${3 +
+            Math.random() * 5}px;left:${Math.random() *
             100}%;top:-10px;background:${
             ["#4f6ef7", "#8b5cf6", "#22c55e", "#f59e0b", "#ef4444"][
               Math.floor(Math.random() * 5)
             ]
           };border-radius:${
             Math.random() > 0.5 ? "50%" : "2px"
-          };z-index:201;pointer-events:none;animation:${Math.random() * 2 +
-            2}s linear forwards;animation-name:cf`;
+          };z-index:201;pointer-events:none;animation:cf${Math.random() * 2 +
+            2}s linear forwards`;
           c.style.animationDelay = Math.random() * 1.2 + "s";
           document.head.insertAdjacentHTML(
             "beforeend",
-            "<style>@keyframes cf{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}</style>"
+            "<style>@keyframes cf{0%{transform:translateY(0) rotate(0deg);opacity:1}0%to{transform:translateY(100vh) rotate(720deg);opacity:0}}@keyframes cf2{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(-540deg);opacity:0}}</style>"
           );
           document.body.appendChild(c);
           setTimeout(() => c.remove(), 5000);
         }
       }
 
+      // ── Toast ──
+      function toast(msg, undoable = false) {
+        const el = document.getElementById("toast");
+        document.getElementById("toastMsg").textContent = msg;
+        if (undoable) {
+          document.getElementById("toastBtn").style.display = "inline-block";
+        } else {
+          document.getElementById("toastBtn").style.display = "none";
+        }
+        el.classList.add("show");
+        clearTimeout(window._toast_timer);
+        window._toast_timer = setTimeout(
+          () => el.classList.remove("show"),
+          3000
+        );
+      }
+      function toastUndo() {
+        const fn = undoStack.pop();
+        if (fn) fn();
+        document.getElementById("toast").classList.remove("show");
+        render();
+      }
+
+      // ── Compose ──
+      function toggleCompose() {
+        document.getElementById("compose").classList.toggle("on");
+      }
+      function hideCompose() {
+        document.getElementById("compose").classList.remove("on");
+      }
+
+      // ── Walkthrough ──
+      let walkStep = 0;
+      function showWalk() {
+        document.getElementById("walk").classList.add("show");
+      }
+      function hideWalk() {
+        document.getElementById("walk").classList.remove("show");
+      }
+      const WALK = [
+        {
+          icon: "👋",
+          title: "Welcome to Zero",
+          desc:
+            "A faster way to process your email. Let's take 10 seconds to get you started."
+        },
+        {
+          icon: "⚡",
+          title: "Clear your inbox fast",
+          desc:
+            "Hover over any email and click ✓ to mark it done, ⏰ to snooze it, or ★ to flag. No opening needed."
+        },
+        {
+          icon: "⌨",
+          title: "Stay on your keyboard",
+          desc:
+            "Press <b>J</b> to go down, <b>E</b> to mark done, <b>S</b> to snooze, <b>R</b> to reply. Press <b>?</b> anytime for the full list."
+        },
+        {
+          icon: "🎯",
+          title: "Focus mode",
+          desc:
+            "Click ⚡Focus in the header to see only what needs your attention right now. Everything else waits."
+        }
+      ];
+      function nextWalk() {
+        walkStep++;
+        if (walkStep >= WALK.length) {
+          hideWalk();
+          localStorage.setItem(WALK_KEY, "1");
+          return;
+        }
+        const w = WALK[walkStep];
+        document.getElementById("walkIcon").textContent = w.icon;
+        document.getElementById("walkTitle").textContent = w.title;
+        document.getElementById("walkDesc").innerHTML = w.desc;
+        document.getElementById("walkBtn").textContent =
+          walkStep < WALK.length - 1 ? "Next →" : "Got it!";
+        document.querySelectorAll("#walkSteps .dot").forEach((d, i) => {
+          d.className = "dot" + (i === walkStep ? " on" : "");
+        });
+      }
+
       // ── Shortcuts ──
       function showShortcuts() {
-        document.getElementById("shortcutsOverlay").classList.add("show");
+        document.getElementById("scOver").classList.add("show");
       }
       function hideShortcuts() {
-        document.getElementById("shortcutsOverlay").classList.remove("show");
+        document.getElementById("scOver").classList.remove("show");
       }
+
+      // ── Keyboard ──
       document.addEventListener("keydown", e => {
         if (
           ["INPUT", "TEXTAREA"].includes(e.target.tagName) &&
@@ -2443,76 +2708,71 @@
           return;
         if (e.key === "Escape") {
           hideShortcuts();
-          if (document.querySelector(".compose-overlay"))
-            document.querySelector(".compose-overlay").remove();
-          showInbox();
+          hideCompose();
+          goHome();
           return;
         }
         if (e.key === "?") showShortcuts();
         if (e.key === "n" || e.key === "N") toggleCompose();
+        if (e.key === "i" || e.key === "I") goHome();
         if (e.key === "r" || e.key === "R") {
-          if (replyingTo) openReply();
+          qrOpen();
         }
         if (e.key === "e" || e.key === "E") {
           if (selId !== null) {
-            archiveThread(selId);
-            if (filtered().length) {
-              const next = filtered().find(t => t.id !== selId);
-              if (next) selId = next.id;
-            }
+            doDone(selId);
+            const items = getItems();
+            const idx = items.findIndex(t => t.id === selId);
+            if (idx < items.length - 1) selId = items[idx + 1].id;
+            else if (idx > 0) selId = items[idx - 1].id;
+            else selId = null;
+            render();
           }
-          render();
         }
         if (e.key === "s" || e.key === "S") {
           if (selId !== null) {
-            snoozeThreadFromRow(selId);
+            doSnooze(selId);
             render();
           }
         }
         if (e.key === "f" || e.key === "F") {
           if (selId !== null) {
-            toggleFlag(selId);
+            doFlag(selId);
             render();
           }
         }
         if (e.key === "x" || e.key === "X") {
           if (selId !== null) {
-            toggleSelect(selId);
-            const items = filtered();
+            toggleSel(selId);
+            const items = getItems();
             const idx = items.findIndex(t => t.id === selId);
-            if (idx < items.length - 1) selId = items[idx + 1].id;
-            render();
+            if (idx < items.length - 1) {
+              selId = items[idx + 1].id;
+              render();
+            }
           }
         }
         if (e.key === "j" || e.key === "J") {
-          const items = filtered();
+          const items = getItems();
           if (items.length) {
             const idx = items.findIndex(t => t.id === selId);
             if (idx < items.length - 1) {
               selId = items[idx + 1].id;
               render();
-              if (
-                document
-                  .getElementById("threadDetail")
-                  .classList.contains("active")
-              )
-                selectThread(selId);
+              if (document.getElementById("detail").classList.contains("on"))
+                openThread(selId);
             }
           }
         }
         if (e.key === "k" || e.key === "K") {
-          const items = filtered();
+          const items = getItems();
           if (items.length) {
             const idx = items.findIndex(t => t.id === selId);
             if (idx > 0) {
               selId = items[idx - 1].id;
               render();
-              if (
-                document
-                  .getElementById("threadDetail")
-                  .classList.contains("active")
-              )
-                selectThread(selId);
+              if (document.getElementById("detail").classList.contains("on"))
+                openThread(selId);
             }
           }
         }
@@ -2523,17 +2783,11 @@
             render();
           }
         }
-        if (e.key === "m" || e.key === "M") {
-          if (selId !== null) {
-            archiveThread(selId);
-            render();
-          }
-        }
         if (e.key === ".") {
           setMode(mode === "focus" ? "inbox" : "focus");
         }
         if (e.key === "/" && e.target.tagName !== "INPUT") {
-          document.getElementById("sidebarSearchInput").focus();
+          document.getElementById("sSearch").focus();
           e.preventDefault();
         }
       });
@@ -2542,11 +2796,12 @@
       window.addEventListener("hashchange", () => {
         if (window.location.hash.startsWith("#thread/")) {
           const id = parseInt(window.location.hash.split("/")[1]);
-          if (!isNaN(id)) selectThread(id);
-        } else showInbox();
+          if (!isNaN(id)) openThread(id);
+        } else goHome();
       });
 
       // ── Init ──
+      if (!localStorage.getItem(WALK_KEY)) setTimeout(showWalk, 400);
       render();
     </script>
   </body>
