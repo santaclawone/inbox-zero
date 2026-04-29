@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width,initial-scale=1.0,user-scalable=no"
+      content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover"
     />
-    <title>Zero — Inbox, Reimagined</title>
+    <title>Zero — Inbox Zero, Made Simple</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
@@ -18,30 +18,28 @@
         padding: 0;
         box-sizing: border-box;
         -webkit-tap-highlight-color: transparent;
+        outline: none;
       }
       :root {
-        --bg: #f4f5f9;
+        --bg: #f4f6fa;
         --surface: #fff;
-        --hover: #eff0f5;
-        --push: #e4e6ee;
-        --border: #e2e4ec;
-        --text: #12141c;
-        --text2: #6a7086;
-        --text3: #9ca1b6;
+        --hover: #edf0f6;
+        --border: #e1e4ec;
+        --text: #131722;
+        --text2: #67708a;
+        --text3: #959db5;
         --accent: #4f6ef7;
         --accent-bg: #eef1ff;
-        --accent-ring: rgba(79, 110, 247, 0.25);
+        --accent2: #6366f1;
         --green: #16a34a;
         --green-bg: #e6f7ec;
-        --amber: #d97706;
-        --amber-bg: #fef3c7;
         --red: #dc2626;
         --red-bg: #fde8e8;
+        --amber: #d97706;
+        --amber-bg: #fef3c7;
         --purple: #7c3aed;
         --radius: 10px;
-        --radius-sm: 7px;
         --ease: cubic-bezier(0.22, 1, 0.36, 1);
-        --sidebar-w: 260px;
       }
       body {
         font-family: "Inter", -apple-system, sans-serif;
@@ -56,78 +54,105 @@
         color: var(--accent);
       }
       ::-webkit-scrollbar {
-        width: 4px;
+        width: 3px;
       }
       ::-webkit-scrollbar-thumb {
         background: var(--border);
         border-radius: 4px;
       }
+
       /* ── Layout ── */
       .app {
         display: grid;
-        grid-template-columns: var(--sidebar-w) 1fr;
-        grid-template-rows: 48px 1fr;
+        grid-template-columns: 220px 1fr;
         height: 100dvh;
-        transition: grid-template-columns 0.4s var(--ease);
+        transition: grid-template-columns 0.35s var(--ease);
       }
-      .app.detail-open {
-        grid-template-columns: var(--sidebar-w) 1fr;
+      .app.hide-side {
+        grid-template-columns: 0 1fr;
       }
+      .app.detail-on {
+        grid-template-columns: 0 1fr;
+      }
+
       /* ── Header ── */
       .header {
-        grid-column: 1/-1;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 48px;
         background: var(--surface);
         border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 12px 0 16px;
-        z-index: 30;
-        position: relative;
-      }
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        font-weight: 800;
-        font-size: 14px;
-        letter-spacing: -0.2px;
-        color: var(--text);
-        text-decoration: none;
-        user-select: none;
-      }
-      .logo-box {
-        width: 24px;
-        height: 24px;
-        background: linear-gradient(135deg, var(--accent), var(--purple));
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 10px;
-        font-weight: 800;
-        box-shadow: 0 2px 6px rgba(79, 110, 247, 0.2);
-      }
-      .logo span {
-        background: linear-gradient(135deg, var(--accent), var(--purple));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        padding: 0 12px;
+        z-index: 40;
       }
       .header-left {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 6px;
       }
-      .mode-group {
+      .menu-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
         display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: var(--text2);
+        transition: 0.12s;
+        display: none;
+      }
+      .menu-btn:hover {
+        background: var(--hover);
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 13px;
+        letter-spacing: -0.15px;
+        color: var(--text);
+        text-decoration: none;
+        padding: 4px 6px;
+        border-radius: 6px;
+        transition: 0.12s;
+        user-select: none;
+      }
+      .logo:hover {
+        background: var(--hover);
+      }
+      .logo-box {
+        width: 22px;
+        height: 22px;
+        background: linear-gradient(135deg, var(--accent), var(--purple));
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 9px;
+        font-weight: 800;
+        box-shadow: 0 2px 4px rgba(79, 110, 247, 0.15);
+      }
+      .hdr-center {
+        display: flex;
+        align-items: center;
         gap: 1px;
         background: var(--bg);
         padding: 2px;
         border-radius: 7px;
       }
-      .mode-tab {
+      .hdr-tab {
         padding: 4px 12px;
         border-radius: 5px;
         font-size: 11px;
@@ -139,43 +164,25 @@
         background: transparent;
         color: var(--text3);
       }
-      .mode-tab:hover {
+      .hdr-tab:hover {
         color: var(--text2);
       }
-      .mode-tab.on {
+      .hdr-tab.on {
         background: var(--surface);
         color: var(--text);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
       }
-      .header-right {
+      .hdr-right {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
       }
-      .pulse-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--green);
-        display: inline-block;
-      }
-      .streak-badge {
-        display: flex;
-        align-items: center;
-        gap: 3px;
-        font-size: 10px;
-        font-weight: 500;
-        color: var(--text3);
-        padding: 3px 8px;
-        border-radius: 20px;
-        background: var(--bg);
-      }
-      .avatar {
-        border: none;
+      .avatar-btn {
         width: 26px;
         height: 26px;
         border-radius: 50%;
         background: linear-gradient(135deg, var(--accent), var(--purple));
+        border: none;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -185,6 +192,10 @@
         cursor: pointer;
         position: relative;
         flex-shrink: 0;
+        transition: 0.12s;
+      }
+      .avatar-btn:hover {
+        opacity: 0.9;
       }
       .avatar-dot {
         position: absolute;
@@ -196,6 +207,25 @@
         border: 2px solid var(--surface);
         border-radius: 50%;
       }
+
+      /* ── Progress bar ── */
+      .progress-bar {
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--border);
+        z-index: 41;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--green), var(--accent));
+        border-radius: 0 2px 2px 0;
+        transition: width 0.5s var(--ease);
+      }
+
       /* ── Sidebar ── */
       .sidebar {
         background: var(--surface);
@@ -203,8 +233,16 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        position: relative;
-        z-index: 20;
+        position: fixed;
+        top: 48px;
+        left: 0;
+        bottom: 0;
+        width: 220px;
+        z-index: 30;
+        transition: transform 0.3s var(--ease);
+      }
+      .sidebar.hidden {
+        transform: translateX(-100%);
       }
       .sidebar-inner {
         padding: 10px 8px;
@@ -212,85 +250,85 @@
         flex-direction: column;
         height: 100%;
         overflow-y: auto;
-        overflow-x: hidden;
       }
       .compose-btn {
         display: flex;
         align-items: center;
         gap: 6px;
-        padding: 9px 14px;
-        border-radius: var(--radius-sm);
+        padding: 8px 14px;
+        border-radius: 7px;
         font-size: 12px;
         font-weight: 600;
         cursor: pointer;
         border: none;
-        transition: all 0.2s;
+        transition: all 0.18s;
         font-family: inherit;
         background: linear-gradient(135deg, var(--accent), #6366f1);
         color: #fff;
-        box-shadow: 0 1px 3px rgba(79, 110, 247, 0.2);
+        box-shadow: 0 1px 3px rgba(79, 110, 247, 0.15);
         justify-content: center;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
       .compose-btn:hover {
-        box-shadow: 0 4px 12px rgba(79, 110, 247, 0.25);
+        box-shadow: 0 3px 10px rgba(79, 110, 247, 0.2);
         transform: translateY(-1px);
       }
       .compose-btn:active {
-        transform: translateY(0);
+        transform: scale(0.98);
       }
-      .search-field {
+      .quick-search {
         display: flex;
         align-items: center;
         gap: 6px;
         padding: 6px 9px;
-        border-radius: var(--radius-sm);
+        border-radius: 7px;
         border: 1px solid var(--border);
         font-size: 12px;
         color: var(--text3);
         cursor: text;
         transition: 0.2s;
         background: var(--bg);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
-      .search-field:focus-within {
+      .quick-search:focus-within {
         border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-ring);
+        box-shadow: 0 0 0 3px var(--accent-bg);
         background: var(--surface);
       }
-      .search-field input {
+      .quick-search input {
         background: none;
         border: none;
         outline: none;
-        font-size: 12px;
+        font-size: 11px;
         font-family: inherit;
         width: 100%;
         color: var(--text);
       }
-      .search-field input::placeholder {
+      .quick-search input::placeholder {
         color: var(--text3);
       }
-      .sec-label {
-        font-size: 9px;
+
+      .nav-group {
+        margin-bottom: 4px;
+      }
+      .nav-label {
+        font-size: 8px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.7px;
         color: var(--text3);
-        margin: 12px 0 3px 8px;
-      }
-      .sec-label:first-of-type {
-        margin-top: 0;
+        margin: 10px 0 2px 8px;
       }
       .nav-item {
         display: flex;
         align-items: center;
-        gap: 7px;
-        padding: 5px 9px;
+        gap: 6px;
+        padding: 5px 8px;
         border-radius: 6px;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.12s;
+        transition: all 0.1s;
         color: var(--text2);
         text-decoration: none;
         border: none;
@@ -298,6 +336,7 @@
         width: 100%;
         text-align: left;
         font-family: inherit;
+        line-height: 1.3;
         position: relative;
       }
       .nav-item:hover {
@@ -306,7 +345,6 @@
       }
       .nav-item:active {
         background: var(--push);
-        transform: scale(0.98);
       }
       .nav-item.on {
         background: var(--accent-bg);
@@ -314,77 +352,37 @@
         font-weight: 600;
       }
       .nav-item .ico {
-        font-size: 12px;
-        width: 18px;
+        font-size: 11px;
+        width: 16px;
         text-align: center;
-        opacity: 0.6;
+        flex-shrink: 0;
+        opacity: 0.55;
       }
       .nav-item .cnt {
-        font-size: 10px;
+        font-size: 9px;
         color: var(--text3);
         font-weight: 500;
         margin-left: auto;
-        padding: 0 5px;
+        padding: 0 4px;
+        min-width: 16px;
+        text-align: right;
       }
       .nav-item.on .cnt {
         color: var(--accent);
       }
-      .nav-item .hkey {
-        font-size: 8px;
-        color: var(--text3);
-        margin-left: 8px;
-        background: var(--bg);
-        padding: 1px 4px;
-        border-radius: 3px;
-        font-weight: 500;
-        display: none;
-      }
-      /* ── Drop target highlight ── */
       .nav-item.drag-over {
         background: var(--accent-bg);
         border: 1px dashed var(--accent);
-        padding: 4px 8px;
       }
-      /* ── Toolbar ── */
-      .toolbar {
-        display: flex;
-        align-items: center;
-        gap: 3px;
-        padding: 0;
-        margin-bottom: 8px;
-        flex-wrap: wrap;
-        min-height: 28px;
-      }
-      .toolbar .btn {
-        font-size: 10px;
-        padding: 3px 8px;
-        border-radius: 5px;
-      }
-      .toolbar .count {
-        font-size: 11px;
-        color: var(--text3);
-        margin-right: 6px;
-        font-weight: 500;
-      }
-      .toolbar-sep {
-        width: 1px;
-        height: 14px;
-        background: var(--border);
-        margin: 0 3px;
-        flex-shrink: 0;
-      }
-      .toolbar .badge {
-        padding: 0 5px;
-        font-size: 9px;
-        height: 16px;
-        line-height: 16px;
-      }
-      /* ── Content ── */
+
+      /* ── Inbox ── */
       .content {
         display: flex;
         flex-direction: column;
         overflow: hidden;
         background: var(--bg);
+        margin-top: 48px;
+        height: calc(100dvh - 48px);
       }
       .scroll {
         flex: 1;
@@ -394,73 +392,129 @@
         -webkit-overflow-scrolling: touch;
       }
       .inner {
-        max-width: 820px;
+        max-width: 760px;
         margin: 0 auto;
-        padding: 12px 20px 24px;
+        padding: 10px 16px 24px;
       }
+
       .inbox-head {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         justify-content: space-between;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
       }
       .inbox-title {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 800;
-        letter-spacing: -0.2px;
+        letter-spacing: -0.25px;
       }
       .inbox-sub {
         font-size: 11px;
         color: var(--text3);
-        font-weight: 500;
+        font-weight: 400;
       }
-      /* ── Batch bar ── */
-      .batch-bar {
-        display: none;
-        align-items: center;
-        gap: 4px;
-        padding: 5px 10px;
-        background: var(--accent-bg);
-        border: 1px solid var(--accent);
-        border-radius: 8px;
-        margin-bottom: 8px;
-        font-size: 11px;
-        color: var(--accent);
-        animation: slideDown 0.2s var(--ease);
-      }
-      .batch-bar.show {
+
+      /* ── Inbox Zero progress ring ── */
+      .zero-ring {
         display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: var(--surface);
+        border-radius: var(--radius);
+        margin-bottom: 10px;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: 0.2s;
       }
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-6px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      .zero-ring:hover {
+        border-color: var(--accent);
+        background: var(--accent-bg);
       }
-      .batch-bar .cnt {
-        font-weight: 700;
-        margin-right: 2px;
+      .zero-ring:active {
+        transform: scale(0.99);
       }
-      .batch-bar .btn {
-        font-size: 9px;
-        padding: 3px 7px;
-        border-radius: 4px;
+      .ring-wrap {
+        position: relative;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
       }
-      /* ── Time group label ── */
-      .time-group {
+      .ring-svg {
+        transform: rotate(-90deg);
+      }
+      .ring-bg {
+        fill: none;
+        stroke: var(--border);
+        stroke-width: 3;
+      }
+      .ring-fg {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 3;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.6s var(--ease);
+      }
+      .ring-label {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 10px;
-        font-weight: 600;
-        color: var(--text3);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding: 10px 8px 4px;
-        margin-top: 4px;
+        font-weight: 700;
+        color: var(--accent);
       }
-      /* ── Thread row ── */
+      .zero-info {
+        min-width: 0;
+      }
+      .zero-info .stat {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .zero-info .sub {
+        font-size: 10px;
+        color: var(--text3);
+      }
+      .zero-info .suggestion {
+        font-size: 10px;
+        color: var(--accent);
+        font-weight: 500;
+        margin-top: 1px;
+      }
+
+      /* ── Toolbar ── */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .toolbar .btn {
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 5px;
+      }
+      .toolbar .btn.on {
+        background: var(--accent-bg);
+        color: var(--accent);
+        border-color: transparent;
+      }
+      .toolbar .sep {
+        width: 1px;
+        height: 14px;
+        background: var(--border);
+        margin: 0 3px;
+        flex-shrink: 0;
+      }
+      .toolbar .label {
+        font-size: 10px;
+        color: var(--text3);
+        margin-right: 4px;
+      }
+
+      /* ── Thread list ── */
       .threads {
         display: flex;
         flex-direction: column;
@@ -468,44 +522,52 @@
       }
       .thread-row {
         display: grid;
-        grid-template-columns: 22px 26px 1fr auto;
+        grid-template-columns: 20px 28px 1fr auto;
         gap: 6px;
-        padding: 8px 10px 8px 6px;
+        padding: 8px 8px 8px 5px;
         cursor: pointer;
-        transition: all 0.15s;
-        border-radius: 8px;
+        transition: all 0.12s;
+        border-radius: var(--radius);
         align-items: start;
         background: var(--surface);
         border: 1px solid transparent;
         position: relative;
         user-select: none;
-      }
-      .thread-row:active {
-        transform: scale(0.99);
-        background: var(--hover);
+        overflow: hidden;
       }
       .thread-row:hover {
         background: var(--surface);
         border-color: var(--border);
       }
-      .thread-row:has(.cb.on) {
-        background: var(--accent-bg);
-        border-color: var(--accent);
+      .thread-row:active {
+        background: var(--hover);
       }
-      .thread-row.fr {
+      .thread-row.unread {
         background: var(--surface);
-        border-left: 2px solid var(--accent);
+        border-left-color: var(--accent);
       }
       .thread-row.done {
-        opacity: 0.5;
+        opacity: 0.45;
       }
       .thread-row.done:hover {
-        opacity: 0.8;
+        opacity: 0.7;
       }
+      .thread-row.done .th-sub {
+        text-decoration: line-through;
+        color: var(--text3);
+      }
+      .thread-row.drag-origin {
+        opacity: 0.3;
+      }
+      .thread-row.tapped {
+        transform: scale(0.98);
+        background: var(--hover);
+      }
+
       /* Checkbox */
       .cb {
-        width: 13px;
-        height: 13px;
+        width: 12px;
+        height: 12px;
         border: 1.5px solid var(--border);
         border-radius: 3px;
         cursor: pointer;
@@ -523,21 +585,23 @@
       }
       .cb.on::after {
         content: "";
-        width: 4px;
-        height: 7px;
+        width: 3px;
+        height: 6px;
         border: 2px solid #fff;
         border-top: none;
         border-left: none;
         transform: rotate(45deg);
         margin-top: -1px;
       }
-      .cb:hover {
+      .thread-row:has(.cb.on) {
+        background: var(--accent-bg);
         border-color: var(--accent);
       }
+
       /* Avatar */
-      .th-av {
-        width: 26px;
-        height: 26px;
+      .av {
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -546,52 +610,57 @@
         font-weight: 700;
         color: #fff;
         flex-shrink: 0;
-        transition: 0.15s;
+        position: relative;
       }
-      .thread-row.fr .th-av {
-        width: 28px;
-        height: 28px;
-        font-size: 10px;
+      .av .urg-dot {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        width: 8px;
+        height: 8px;
+        background: var(--red);
+        border-radius: 50%;
+        border: 1.5px solid var(--surface);
       }
+
       /* Body */
-      .th-body {
+      .tb {
         min-width: 0;
       }
-      .th-from {
+      .tf {
         font-size: 11px;
         font-weight: 500;
-        margin-bottom: 0;
         display: flex;
         align-items: center;
         gap: 3px;
         color: var(--text2);
+        line-height: 1.2;
       }
-      .thread-row.fr .th-from {
+      .thread-row.unread .tf {
         font-weight: 600;
         color: var(--text);
       }
-      .th-sub {
+      .ts {
         font-size: 12px;
         font-weight: 500;
         color: var(--text);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        margin-bottom: 0;
       }
-      .thread-row.fr .th-sub {
+      .thread-row.unread .ts {
         font-weight: 600;
       }
-      .th-snip {
+      .tn {
         font-size: 10px;
         color: var(--text3);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        line-height: 1.3;
+        line-height: 1.2;
         margin-top: 0;
       }
-      .th-tags {
+      .tt {
         display: flex;
         gap: 2px;
         margin-top: 1px;
@@ -599,11 +668,12 @@
       }
       .tag {
         font-size: 7px;
-        padding: 1px 4px;
+        padding: 1px 3px;
         border-radius: 3px;
         font-weight: 600;
         letter-spacing: 0.1px;
         text-transform: uppercase;
+        line-height: 1.2;
       }
       .tag.urgent {
         background: var(--red-bg);
@@ -618,36 +688,36 @@
         color: var(--green);
       }
       .tag.wait {
-        background: #f0f0f0;
-        color: #777;
+        background: #eceef3;
+        color: #6b7285;
       }
-      .tag.ai {
-        background: var(--accent-bg);
-        color: var(--accent);
+      .tag.done-t {
+        background: var(--green-bg);
+        color: var(--green);
       }
-      .th-meta {
+      .tm {
         text-align: right;
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         gap: 0;
+        min-width: 44px;
       }
-      .th-date {
+      .td {
         font-size: 9px;
         color: var(--text3);
         font-weight: 500;
         white-space: nowrap;
       }
-      /* ── Drag & Drop visual ── */
-      .thread-row.dragging {
-        opacity: 0.4;
+      .tf2 {
+        font-size: 8px;
+        color: var(--text3);
+        margin-top: 1px;
       }
-      .thread-row.drag-above {
-        border-top: 2px solid var(--accent);
-      }
-      /* ── Quick actions (visible on hover) ── */
-      .qa-wrap {
+
+      /* ── Quick actions (appear on hover/on mobile tap) ── */
+      .qa {
         position: absolute;
         right: 0;
         top: 0;
@@ -655,60 +725,126 @@
         display: none;
         align-items: center;
         gap: 1px;
-        background: linear-gradient(270deg, var(--surface) 55%, transparent);
-        padding: 0 6px 0 24px;
-        border-radius: 0 8px 8px 0;
-        pointer-events: none;
+        background: linear-gradient(270deg, var(--surface) 60%, transparent);
+        padding: 0 4px 0 24px;
+        border-radius: 0 var(--radius) var(--radius) 0;
       }
-      .thread-row:hover .qa-wrap {
+      .thread-row:hover .qa {
         display: flex;
-        pointer-events: auto;
       }
-      .qa-btn {
+      .qab {
         width: 20px;
         height: 20px;
         border: none;
         border-radius: 3px;
         cursor: pointer;
-        font-size: 10px;
+        font-size: 9px;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: 0.1s;
         background: transparent;
         color: var(--text3);
+        font-family: inherit;
       }
-      .qa-btn:hover {
+      .qab:hover {
         background: var(--hover);
         color: var(--text);
       }
-      .qa-btn:active {
+      .qab:active {
         background: var(--push);
-        transform: scale(0.9);
       }
-      /* ── Swipe hint (mobile) ── */
-      .swipe-hint {
-        display: none;
+
+      /* ── Swipe (mobile) ── */
+      .swipe-container {
         position: absolute;
         inset: 0;
-        border-radius: 8px;
-        overflow: hidden;
+        display: none;
         pointer-events: none;
+        border-radius: var(--radius);
+        overflow: hidden;
       }
       .swipe-bg {
         position: absolute;
         inset: 0;
-        border-radius: 8px;
-        transition: transform 0.3s var(--ease);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+        transition: none;
       }
-      .swipe-archive {
-        background: #dc2626;
+      .swipe-bg.left {
+        background: var(--green);
+        justify-content: flex-start;
         transform: translateX(-100%);
       }
-      .swipe-snooze {
-        background: #f59e0b;
+      .swipe-bg.right {
+        background: var(--amber);
+        justify-content: flex-end;
         transform: translateX(100%);
       }
+
+      /* ── Time groups ── */
+      .time-head {
+        font-size: 9px;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 10px 8px 3px;
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .time-head::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      /* ── Batch bar ── */
+      .batch {
+        display: none;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 10px 5px 14px;
+        background: var(--accent-bg);
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        margin-bottom: 8px;
+        font-size: 11px;
+        color: var(--accent);
+        animation: bd 0.2s var(--ease);
+      }
+      .batch.show {
+        display: flex;
+      }
+      @keyframes bd {
+        from {
+          opacity: 0;
+          transform: translateY(-5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .batch .cnt {
+        font-weight: 700;
+        margin-right: auto;
+      }
+      .batch .btn {
+        font-size: 9px;
+        padding: 3px 7px;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+
       /* ── Detail view ── */
       .detail {
         display: none;
@@ -716,12 +852,14 @@
         height: 100%;
         background: var(--surface);
         overflow: hidden;
-        animation: di 0.25s var(--ease);
+        animation: de 0.25s var(--ease);
+        margin-top: 48px;
+        height: calc(100dvh - 48px);
       }
       .detail.on {
         display: flex;
       }
-      @keyframes di {
+      @keyframes de {
         from {
           opacity: 0;
         }
@@ -729,18 +867,18 @@
           opacity: 1;
         }
       }
-      .detail-head {
+      .dh {
         flex-shrink: 0;
         border-bottom: 1px solid var(--border);
-        padding: 0 20px;
+        padding: 0 16px;
       }
-      .detail-nav {
+      .dn {
         display: flex;
         align-items: center;
         gap: 4px;
         padding: 6px 0;
       }
-      .detail-back {
+      .d-back {
         display: flex;
         align-items: center;
         gap: 4px;
@@ -755,19 +893,19 @@
         transition: 0.15s;
         font-family: inherit;
       }
-      .detail-back:hover {
+      .d-back:hover {
         background: var(--hover);
         color: var(--text);
       }
-      .detail-nav-r {
+      .dnr {
         margin-left: auto;
         display: flex;
         gap: 1px;
       }
-      .detail-nav-btn {
+      .dnb {
         background: none;
         border: none;
-        padding: 3px 6px;
+        padding: 3px 5px;
         border-radius: 4px;
         font-size: 10px;
         color: var(--text3);
@@ -775,104 +913,103 @@
         transition: 0.15s;
         font-family: inherit;
       }
-      .detail-nav-btn:hover {
+      .dnb:hover {
         background: var(--hover);
         color: var(--text2);
       }
-      .detail-nav-btn:disabled {
-        opacity: 0.2;
+      .dnb:disabled {
+        opacity: 0.15;
+        cursor: default;
       }
-      .detail-subj {
-        padding: 12px 0 0;
+      .ds {
+        padding: 10px 0 0;
         font-size: 16px;
         font-weight: 700;
         line-height: 1.3;
         letter-spacing: -0.1px;
       }
-      .detail-acts {
+      .da {
         display: flex;
         gap: 2px;
-        padding: 8px 0 10px;
+        padding: 6px 0 8px;
         border-bottom: 1px solid var(--border);
       }
-      .detail-acts .btn {
+      .da .btn {
         font-size: 10px;
         padding: 4px 8px;
         border-radius: 4px;
       }
-      .detail-body {
+      .db {
         flex: 1;
         overflow-y: auto;
-        padding: 16px 20px 40px;
-        max-width: 600px;
+        padding: 14px 16px 32px;
+        max-width: 580px;
         scrollbar-width: thin;
-        -webkit-overflow-scrolling: touch;
       }
-      .detail-sender {
+      .d-sender {
         display: flex;
         align-items: flex-start;
-        gap: 9px;
-        margin-bottom: 12px;
-        padding-bottom: 10px;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
         border-bottom: 1px solid var(--border);
       }
-      .detail-sav {
-        width: 30px;
-        height: 30px;
+      .d-sav {
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 700;
         color: #fff;
         flex-shrink: 0;
       }
-      .detail-sinfo {
+      .d-si {
         min-width: 0;
       }
-      .detail-sname {
+      .d-sn {
         font-size: 12px;
         font-weight: 600;
       }
-      .detail-sm {
+      .d-sm {
         font-size: 10px;
         color: var(--text3);
       }
-      .detail-text {
+      .dtx {
         font-size: 12px;
         line-height: 1.7;
         color: var(--text);
       }
-      .detail-text p {
-        margin-bottom: 8px;
+      .dtx p {
+        margin-bottom: 6px;
       }
-      .detail-text .q {
+      .dtx .q {
         border-left: 2px solid var(--border);
-        padding: 8px 10px;
+        padding: 6px 10px;
         color: var(--text2);
-        margin: 8px 0;
+        margin: 6px 0;
         background: var(--bg);
-        border-radius: 0 6px 6px 0;
+        border-radius: 0 5px 5px 0;
         font-size: 11px;
       }
-      .detail-text .sig {
+      .dtx .sig {
         color: var(--text3);
         font-size: 10px;
-        margin-top: 16px;
-        padding-top: 10px;
+        margin-top: 14px;
+        padding-top: 8px;
         border-top: 1px solid var(--border);
       }
-      .detail-text .b {
+      .dtx .b {
         margin: 1px 0;
         padding-left: 4px;
         font-size: 11px;
       }
-      /* Quick Reply */
       .qr {
         display: none;
-        padding: 10px 0;
-        margin-top: 8px;
+        padding: 8px 0;
+        margin-top: 6px;
         border-top: 1px solid var(--border);
       }
       .qr.on {
@@ -882,11 +1019,11 @@
         width: 100%;
         padding: 6px 10px;
         border: 1px solid var(--border);
-        border-radius: 6px;
+        border-radius: 5px;
         font-size: 11px;
         font-family: inherit;
         resize: none;
-        min-height: 44px;
+        min-height: 40px;
         outline: none;
         transition: 0.2s;
         background: var(--bg);
@@ -896,21 +1033,21 @@
         border-color: var(--accent);
         box-shadow: 0 0 0 2px var(--accent-bg);
       }
-      .qr-foot {
+      .qrf {
         display: flex;
         justify-content: space-between;
-        gap: 6px;
+        gap: 4px;
         margin-top: 4px;
         align-items: center;
       }
-      .qr-snippets {
+      .qrsnip {
         display: flex;
         gap: 2px;
         flex-wrap: wrap;
       }
-      .qr-snippets button {
-        font-size: 9px;
-        padding: 2px 6px;
+      .qrsnip button {
+        font-size: 8px;
+        padding: 2px 5px;
         border-radius: 3px;
         border: 1px solid var(--border);
         background: transparent;
@@ -918,26 +1055,27 @@
         color: var(--text3);
         transition: 0.1s;
         font-family: inherit;
-        line-height: 1.4;
+        line-height: 1.3;
       }
-      .qr-snippets button:hover {
+      .qrsnip button:hover {
         background: var(--hover);
         border-color: var(--text3);
       }
-      /* ── Empty state ── */
+
+      /* ── Empty ── */
       .empty {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 48px 20px;
-        animation: ei 0.4s;
+        padding: 44px 20px;
+        animation: ein 0.4s;
       }
-      @keyframes ei {
+      @keyframes ein {
         from {
           opacity: 0;
-          transform: translateY(8px);
+          transform: translateY(6px);
         }
         to {
           opacity: 1;
@@ -945,35 +1083,37 @@
         }
       }
       .empty-icon {
-        font-size: 40px;
-        margin-bottom: 10px;
+        font-size: 36px;
+        margin-bottom: 8px;
       }
       .empty h3 {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 700;
         margin-bottom: 2px;
       }
       .empty p {
-        font-size: 11px;
-        color: var(--text3);
-        max-width: 240px;
-        line-height: 1.5;
-      }
-      .empty .hint {
         font-size: 10px;
         color: var(--text3);
-        margin-top: 10px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        background: var(--bg);
+        max-width: 220px;
+        line-height: 1.5;
       }
+      .empty .tip {
+        font-size: 9px;
+        color: var(--text3);
+        margin-top: 8px;
+        padding: 3px 10px;
+        border-radius: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+      }
+
       /* ── Pagination ── */
       .pg {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 10px;
-        padding: 6px 0 0;
+        margin-top: 8px;
+        padding: 5px 0 0;
         border-top: 1px solid var(--border);
       }
       .pg button {
@@ -982,7 +1122,7 @@
         border-radius: 5px;
         background: var(--surface);
         cursor: pointer;
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 500;
         transition: 0.15s;
         font-family: inherit;
@@ -993,31 +1133,31 @@
         color: var(--text);
       }
       .pg button:disabled {
-        opacity: 0.25;
+        opacity: 0.2;
         cursor: default;
-        background: transparent;
       }
       .pg-l {
-        font-size: 10px;
+        font-size: 9px;
         color: var(--text3);
       }
-      /* ── Toast / Undo ── */
+
+      /* ── Toast ── */
       .toast {
         position: fixed;
         bottom: 12px;
         left: 50%;
-        transform: translateX(-50%) translateY(20px);
+        transform: translateX(-50%) translateY(16px);
         padding: 7px 14px;
-        background: #1c1f2e;
+        background: #1b1e2b;
         color: #fff;
         border-radius: 8px;
-        font-size: 11px;
+        font-size: 10px;
         display: flex;
         align-items: center;
         gap: 10px;
         z-index: 100;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-        transition: all 0.35s var(--ease);
+        transition: all 0.3s var(--ease);
         opacity: 0;
         pointer-events: none;
         backdrop-filter: blur(8px);
@@ -1028,13 +1168,13 @@
         transform: translateX(-50%) translateY(0);
       }
       .toast button {
-        background: rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.1);
         border: none;
         color: #fff;
-        padding: 3px 8px;
+        padding: 3px 7px;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 600;
         transition: 0.1s;
         font-family: inherit;
@@ -1042,102 +1182,27 @@
       .toast button:hover {
         background: rgba(255, 255, 255, 0.2);
       }
-      /* ── Walkthrough overlay ── */
-      .walk {
-        position: fixed;
-        inset: 0;
-        z-index: 300;
-        display: none;
-        align-items: center;
-        justify-content: center;
-      }
-      .walk.show {
-        display: flex;
-      }
-      .walk-bg {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(3px);
-      }
-      .walk-card {
-        position: relative;
-        background: var(--surface);
-        border-radius: 14px;
-        padding: 32px 36px;
-        max-width: 380px;
-        width: 90vw;
-        text-align: center;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        animation: wc 0.4s var(--ease);
-      }
-      @keyframes wc {
-        from {
-          opacity: 0;
-          transform: scale(0.92) translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1) translateY(0);
-        }
-      }
-      .walk-card .icon {
-        font-size: 48px;
-        margin-bottom: 12px;
-      }
-      .walk-card h2 {
-        font-size: 18px;
-        font-weight: 800;
-        margin-bottom: 4px;
-        letter-spacing: -0.2px;
-      }
-      .walk-card p {
-        font-size: 12px;
-        color: var(--text2);
-        line-height: 1.6;
-        margin-bottom: 16px;
-      }
-      .walk-card .steps {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        margin-bottom: 16px;
-      }
-      .walk-card .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--border);
-        transition: 0.3s;
-      }
-      .walk-card .dot.on {
-        background: var(--accent);
-        width: 18px;
-        border-radius: 3px;
-      }
-      .walk-card .btn {
-        padding: 8px 20px;
-      }
-      /* ── Compose modal ── */
-      .compose {
+
+      /* ── Compose ── */
+      .cm {
         position: fixed;
         bottom: 14px;
         right: 14px;
         z-index: 50;
         display: none;
       }
-      .compose.on {
+      .cm.on {
         display: block;
       }
-      .compose-inner {
+      .cm-in {
         background: var(--surface);
         border-radius: 10px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
           0 0 0 1px rgba(0, 0, 0, 0.03);
-        width: 400px;
+        width: 380px;
         max-width: calc(100vw-28px);
         overflow: hidden;
-        animation: ci 0.3s var(--ease);
+        animation: ci 0.25s var(--ease);
       }
       @keyframes ci {
         from {
@@ -1149,19 +1214,19 @@
           transform: translateY(0);
         }
       }
-      .compose-head {
+      .cm-h {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 14px;
+        padding: 8px 14px;
         border-bottom: 1px solid var(--border);
         background: var(--bg);
       }
-      .compose-head h3 {
-        font-size: 12px;
+      .cm-h h3 {
+        font-size: 11px;
         font-weight: 600;
       }
-      .compose-head button {
+      .cm-h button {
         background: none;
         border: none;
         font-size: 14px;
@@ -1169,15 +1234,14 @@
         color: var(--text3);
         padding: 2px 4px;
         border-radius: 3px;
-        transition: 0.15s;
       }
-      .compose-head button:hover {
+      .cm-h button:hover {
         background: var(--hover);
         color: var(--text);
       }
-      .compose-inner input {
+      .cm-in input {
         width: 100%;
-        padding: 8px 14px;
+        padding: 7px 14px;
         border: none;
         font-size: 11px;
         outline: none;
@@ -1185,30 +1249,87 @@
         border-bottom: 1px solid var(--border);
         color: var(--text);
       }
-      .compose-inner textarea {
+      .cm-in textarea {
         width: 100%;
-        padding: 8px 14px;
+        padding: 7px 14px;
         border: none;
         font-size: 11px;
         outline: none;
         font-family: inherit;
         resize: none;
-        min-height: 80px;
+        min-height: 70px;
         color: var(--text);
       }
-      .compose-foot {
+      .cm-f {
         display: flex;
         justify-content: flex-end;
         gap: 4px;
-        padding: 8px 14px;
+        padding: 6px 14px;
         border-top: 1px solid var(--border);
       }
-      .compose-foot .btn {
-        font-size: 10px;
-        padding: 5px 10px;
+      .cm-f .btn {
+        font-size: 9px;
+        padding: 4px 8px;
       }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.15s;
+        font-family: inherit;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #fff;
+        box-shadow: 0 1px 3px rgba(79, 110, 247, 0.15);
+      }
+      .btn-primary:hover {
+        box-shadow: 0 3px 8px rgba(79, 110, 247, 0.2);
+        transform: translateY(-1px);
+      }
+      .btn-primary:active {
+        transform: scale(0.98);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--text2);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        background: var(--hover);
+        color: var(--text);
+      }
+      .btn-soft {
+        background: transparent;
+        color: var(--text2);
+        border: 1px solid transparent;
+      }
+      .btn-soft:hover {
+        background: var(--hover);
+        color: var(--text);
+        border-color: var(--border);
+      }
+      .btn-red {
+        background: var(--red-bg);
+        color: var(--red);
+        border: 1px solid var(--red-bg);
+      }
+      .btn-red:hover {
+        background: var(--red);
+        color: #fff;
+      }
+
       /* ── Shortcuts overlay ── */
-      .sc-over {
+      .sc {
         position: fixed;
         inset: 0;
         z-index: 200;
@@ -1216,39 +1337,39 @@
         align-items: center;
         justify-content: center;
       }
-      .sc-over.show {
+      .sc.show {
         display: flex;
       }
       .sc-bg {
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(0, 0, 0, 0.25);
         backdrop-filter: blur(2px);
       }
       .sc-card {
         position: relative;
         background: var(--surface);
         border-radius: 12px;
-        padding: 20px 24px;
-        max-width: 360px;
+        padding: 18px 22px;
+        max-width: 340px;
         width: 90vw;
-        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
       }
       .sc-card h3 {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 700;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
       .sc-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 2px 12px;
+        gap: 1px 10px;
       }
       .sc-k {
         display: flex;
         align-items: center;
-        gap: 5px;
-        font-size: 10px;
+        gap: 4px;
+        font-size: 9px;
         color: var(--text2);
         padding: 2px 0;
       }
@@ -1256,339 +1377,441 @@
         background: var(--bg);
         padding: 1px 4px;
         border-radius: 3px;
-        font-size: 9px;
+        font-size: 8px;
         font-weight: 600;
         color: var(--text);
         font-family: inherit;
         border: 1px solid var(--border);
-        min-width: 16px;
+        min-width: 14px;
         text-align: center;
-        line-height: 1.5;
+        line-height: 1.4;
       }
       .sc-k span {
         color: var(--text3);
       }
-      /* ── Focus bar ── */
-      .focus-bar {
+
+      /* ── Walkthrough ── */
+      .wt {
+        position: fixed;
+        inset: 0;
+        z-index: 300;
         display: none;
         align-items: center;
-        gap: 8px;
-        padding: 6px 18px;
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
-        font-size: 10px;
-        color: var(--text2);
+        justify-content: center;
       }
-      .focus-bar.on {
+      .wt.show {
         display: flex;
       }
-      .focus-bar .dot {
+      .wt-bg {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(3px);
+      }
+      .wt-card {
+        position: relative;
+        background: var(--surface);
+        border-radius: 14px;
+        padding: 28px 32px;
+        max-width: 360px;
+        width: 90vw;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+        animation: wca 0.4s var(--ease);
+      }
+      @keyframes wca {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .wt-card .wc {
+        font-size: 42px;
+        margin-bottom: 10px;
+      }
+      .wt-card h2 {
+        font-size: 17px;
+        font-weight: 800;
+        margin-bottom: 3px;
+        letter-spacing: -0.15px;
+      }
+      .wt-card p {
+        font-size: 11px;
+        color: var(--text2);
+        line-height: 1.6;
+        margin-bottom: 14px;
+      }
+      .wt-dots {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-bottom: 14px;
+      }
+      .wt-dots .dot {
         width: 5px;
         height: 5px;
-        background: var(--green);
         border-radius: 50%;
-        animation: pl 2s infinite;
+        background: var(--border);
+        transition: 0.3s;
       }
-      @keyframes pl {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.3;
-        }
-      }
-      .focus-bar .btn {
-        font-size: 9px;
-        padding: 2px 7px;
+      .wt-dots .dot.on {
+        background: var(--accent);
+        width: 16px;
         border-radius: 3px;
       }
-      /* ── Hover tooltips ── */
-      [data-tip] {
+      .wt-card .btn {
+        padding: 7px 18px;
+        font-size: 11px;
+      }
+
+      /* ── Mobile bottom nav ── */
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 52px;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        display: none;
+        align-items: center;
+        justify-content: space-around;
+        z-index: 35;
+        padding: 0 4px;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .bn-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1px;
+        border: none;
+        background: transparent;
+        padding: 4px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.1s;
+        font-size: 7px;
+        color: var(--text3);
+        font-family: inherit;
+        font-weight: 500;
         position: relative;
       }
-      [data-tip]::after {
-        content: attr(data-tip);
+      .bn-btn:hover {
+        background: var(--hover);
+      }
+      .bn-btn.on {
+        color: var(--accent);
+      }
+      .bn-btn .ico {
+        font-size: 16px;
+      }
+      .bn-btn .bc {
         position: absolute;
-        bottom: calc(100%+5px);
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 3px 7px;
-        background: #1c1f2e;
+        top: 2px;
+        right: 6px;
+        min-width: 14px;
+        height: 12px;
+        background: var(--red);
         color: #fff;
-        font-size: 9px;
-        border-radius: 4px;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: 0.15s;
-        font-weight: 500;
+        font-size: 7px;
+        font-weight: 700;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 3px;
       }
-      [data-tip]:hover::after {
-        opacity: 1;
-      }
-      /* ── Skeleton loader ── */
-      @keyframes sk {
-        0% {
-          background-position: -200% 0;
-        }
-        100% {
-          background-position: 200% 0;
-        }
-      }
-      .skel {
-        background: linear-gradient(
-          90deg,
-          var(--border) 25%,
-          var(--hover) 50%,
-          var(--border) 75%
-        );
-        background-size: 200% 100%;
-        animation: sk 1.5s infinite;
-        border-radius: 4px;
-        height: 10px;
-        margin-bottom: 4px;
-      }
+
       /* ── Responsive ── */
       @media (max-width: 860px) {
-        :root {
-          --sidebar-w: 0;
-        }
-        .sidebar {
-          display: none;
-        }
-        .header-left .mode-group {
-          display: none;
-        }
-        .header-left .mode-group.mobile {
+        .menu-btn {
           display: flex;
         }
+        .hdr-center {
+          display: none;
+        }
+        .bottom-nav {
+          display: flex;
+        }
+        .app {
+          padding-bottom: 52px;
+        }
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+        }
         .inner {
-          padding: 8px 10px 16px;
+          padding: 8px 10px 12px;
+          padding-bottom: 62px;
+        }
+        .progress-bar {
+          top: 0;
+          bottom: auto;
+        }
+        .thread-row .qa {
+          display: none;
         }
         .toast {
-          font-size: 10px;
-          padding: 6px 12px;
-          bottom: 8px;
-          left: 12px;
-          right: 12px;
+          max-width: calc(100vw - 20px);
+          left: 10px;
+          right: 10px;
           transform: none;
-          width: auto;
-          border-radius: 6px;
         }
         .toast.show {
           transform: none;
-          left: 12px;
-          right: 12px;
         }
-        .compose {
-          left: 14px;
-          right: 14px;
-          bottom: 14px;
+        .detail {
+          padding-bottom: 52px;
         }
-        .compose-inner {
+        .db {
+          padding: 10px 12px 70px;
+        }
+        .dh {
+          padding: 0 10px;
+        }
+        .scroll {
+          padding-bottom: 52px;
+        }
+        .cm {
+          bottom: 66px;
+          left: 10px;
+          right: 10px;
+        }
+        .cm-in {
           width: 100%;
-        }
-        .detail-body {
-          padding: 12px 14px 32px;
-        }
-        .detail-head {
-          padding: 0 12px;
-        }
-        .qa-wrap {
-          display: flex !important;
-          opacity: 1;
-          position: relative;
-          background: none;
-          padding: 0;
-          pointer-events: auto;
-        }
-        .thread-row .qa-wrap {
-          display: none;
         }
       }
     </style>
   </head>
   <body>
     <div class="app" id="app">
+      <!-- Header -->
       <header class="header">
         <div class="header-left">
+          <button class="menu-btn" id="menuBtn" onclick="toggleSidebar()">
+            ☰
+          </button>
           <div class="logo" onclick="goHome()">
             <div class="logo-box">Z</div>
             <span>Zero</span>
           </div>
-          <div class="mode-group">
-            <button class="mode-tab on" onclick="setMode('inbox')">
-              Inbox
-            </button>
-            <button class="mode-tab" onclick="setMode('focus')">⚡Focus</button>
-          </div>
         </div>
-        <div class="header-right">
-          <div class="streak-badge" data-tip="Your productivity streak">
-            🔥 12
-          </div>
-          <div class="avatar" onclick="showShortcuts()" data-tip="Shortcuts">
+        <div class="hdr-center">
+          <button
+            class="hdr-tab on"
+            onclick="setMode('inbox')"
+            style="display:flex;align-items:center;gap:4px"
+          >
+            📬 Inbox
+          </button>
+          <button class="hdr-tab" onclick="setMode('focus')">⚡ Focus</button>
+        </div>
+        <div class="hdr-right">
+          <button
+            class="btn btn-ghost"
+            style="font-size:9px;padding:2px 8px;height:24px;border-radius:5px"
+            onclick="goHome();setFolder('inbox')"
+            data-tip="Inbox"
+          >
+            📥
+          </button>
+          <button class="avatar-btn" onclick="showShortcuts()">
             <div class="avatar-dot"></div>
             D
-          </div>
+          </button>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
         </div>
       </header>
+
+      <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-inner">
           <button class="compose-btn" onclick="toggleCompose()">
             ✏ New Message
           </button>
-          <div
-            class="search-field"
-            onclick="document.getElementById('sSearch').focus()"
-          >
-            <span style="font-size:10px;opacity:.6">⌕</span>
-            <input
-              id="sSearch"
-              placeholder="Search mail..."
+          <div class="quick-search">
+            <span style="color:var(--text3);font-size:10px">⌕</span
+            ><input
+              id="sIn"
+              placeholder="Search emails..."
               oninput="debouncedSearch()"
               autocomplete="off"
             />
           </div>
-          <div class="sec-label">Focus</div>
-          <button
-            class="nav-item on"
-            data-folder="inbox"
-            onclick="setFolder('inbox')"
-          >
-            <span class="ico">📥</span>Inbox<span class="cnt" id="cInbox"
-              >26</span
-            ><span class="hkey">I</span>
-          </button>
-          <button
-            class="nav-item"
-            data-folder="needs"
-            onclick="setFolder('needs')"
-          >
-            <span class="ico">⚡</span>Needs Reply<span class="cnt" id="cNeeds"
-              >8</span
+          <div class="nav-group">
+            <div class="nav-label">Quick Access</div>
+            <button
+              class="nav-item on"
+              onclick="setFolder('inbox')"
+              data-folder="inbox"
             >
-          </button>
-          <button
-            class="nav-item"
-            data-folder="waiting"
-            onclick="setFolder('waiting')"
-          >
-            <span class="ico">⏳</span>Waiting<span class="cnt" id="cWait"
-              >4</span
+              <span class="ico">📥</span>Inbox<span class="cnt" id="cInbox"
+                >26</span
+              >
+            </button>
+            <button
+              class="nav-item"
+              onclick="setFolder('needs')"
+              data-folder="needs"
             >
-          </button>
-          <div class="sec-label">Folders</div>
-          <button
-            class="nav-item"
-            data-folder="flagged"
-            onclick="setFolder('flagged')"
-          >
-            <span class="ico">★</span>Flagged<span class="cnt" id="cFlag"
-              >3</span
+              <span class="ico">⚡</span>Needs Reply<span
+                class="cnt"
+                id="cNeeds"
+                >8</span
+              >
+            </button>
+            <button
+              class="nav-item"
+              onclick="setFolder('waiting')"
+              data-folder="waiting"
             >
-          </button>
-          <button
-            class="nav-item"
-            data-folder="snoozed"
-            onclick="setFolder('snoozed')"
-          >
-            <span class="ico">⏰</span>Snoozed<span class="cnt" id="cSnooze"
-              >2</span
+              <span class="ico">⏳</span>Waiting<span class="cnt" id="cWait"
+                >4</span
+              >
+            </button>
+            <button
+              class="nav-item"
+              onclick="setFolder('urgent')"
+              data-folder="urgent"
             >
-          </button>
-          <button
-            class="nav-item"
-            data-folder="done"
-            onclick="setFolder('done')"
-          >
-            <span class="ico">✓</span>Done<span class="cnt" id="cDone">12</span>
-          </button>
-          <div class="sec-label">Mail</div>
-          <button class="nav-item" data-folder="all" onclick="setFolder('all')">
-            <span class="ico">📬</span>All Mail<span class="cnt" id="cAll"
-              >36</span
+              <span class="ico">🔴</span>Urgent<span class="cnt" id="cUrgent"
+                >4</span
+              >
+            </button>
+          </div>
+          <div class="nav-group">
+            <div class="nav-label">Organize</div>
+            <button
+              class="nav-item"
+              onclick="setFolder('flagged')"
+              data-folder="flagged"
             >
-          </button>
+              <span class="ico">★</span>Flagged<span class="cnt" id="cFlag"
+                >3</span
+              >
+            </button>
+            <button
+              class="nav-item"
+              onclick="setFolder('snoozed')"
+              data-folder="snoozed"
+            >
+              <span class="ico">⏰</span>Snoozed<span class="cnt" id="cSnooze"
+                >2</span
+              >
+            </button>
+            <button
+              class="nav-item"
+              onclick="setFolder('done')"
+              data-folder="done"
+            >
+              <span class="ico">✓</span>Done<span class="cnt" id="cDone"
+                >12</span
+              >
+            </button>
+            <button
+              class="nav-item"
+              onclick="setFolder('all')"
+              data-folder="all"
+            >
+              <span class="ico">📬</span>All Mail<span class="cnt" id="cAll"
+                >36</span
+              >
+            </button>
+          </div>
           <div style="flex:1"></div>
           <button class="nav-item" onclick="showShortcuts()">
             <span class="ico">⌨</span>Shortcuts
           </button>
-          <button class="nav-item" onclick="walkStep=0;showWalk()">
-            <span class="ico">?</span>Help
-          </button>
         </div>
       </aside>
+
+      <!-- Inbox -->
       <div class="content" id="inboxView">
-        <div class="focus-bar" id="focusBar">
-          <div class="dot"></div>
-          <span
-            ><strong id="focusCount">6</strong> emails need attention — let's
-            clear them</span
-          >
-          <button
-            class="btn btn-ghost"
-            style="margin-left:auto;font-size:9px;padding:2px 8px"
-            onclick="setMode('inbox')"
-          >
-            Exit
-          </button>
-        </div>
         <div class="scroll" id="scroll">
           <div class="inner">
-            <div class="batch-bar" id="batchBar">
-              <span><span class="cnt" id="batchCount">0</span> selected</span>
-              <button class="btn btn-ghost" onclick="batchDo('done')">
-                ✓ Done
-              </button>
-              <button class="btn btn-ghost" onclick="batchDo('read')">
-                Read
-              </button>
-              <button class="btn btn-ghost" onclick="batchDo('flag')">
-                ★ Flag
-              </button>
-              <button class="btn btn-ghost" onclick="batchDo('snooze')">
-                ⏰ Snooze
-              </button>
-              <button
-                class="btn btn-ghost"
-                onclick="clearSel()"
-                style="margin-left:auto"
-              >
-                Clear
-              </button>
-            </div>
-            <div class="inbox-head">
-              <div>
-                <span class="inbox-title" id="inboxTitle">Inbox</span
-                ><span class="inbox-sub" id="inboxSub">
-                  · 26 conversations</span
+            <!-- Inbox Zero ring + suggestion -->
+            <div class="zero-ring" id="zeroRing" onclick="zeroRingClick()">
+              <div class="ring-wrap">
+                <svg
+                  class="ring-svg"
+                  width="36"
+                  height="36"
+                  viewBox="0 0 36 36"
                 >
+                  <circle class="ring-bg" cx="18" cy="18" r="15" />
+                  <circle
+                    class="ring-fg"
+                    id="ringFg"
+                    cx="18"
+                    cy="18"
+                    r="15"
+                    stroke-dasharray="94.25"
+                    stroke-dashoffset="47"
+                  />
+                </svg>
+                <div class="ring-label" id="ringLabel">50%</div>
+              </div>
+              <div class="zero-info">
+                <div class="stat" id="inboxStat">18 processed · 18 to go</div>
+                <div class="sub" id="inboxSubStat">🔥 12-day streak</div>
+                <div class="suggestion" id="inboxSuggestion">
+                  ⚡ 4 unread — start there
+                </div>
               </div>
             </div>
+
+            <div class="batch show" id="batch">
+              <span class="cnt"><span id="batchCount">0</span> selected</span>
+              <button class="btn btn-soft" onclick="batchDo('done')">
+                ✓ Done
+              </button>
+              <button class="btn btn-soft" onclick="batchDo('read')">
+                Read
+              </button>
+              <button class="btn btn-soft" onclick="batchDo('flag')">
+                ★ Flag
+              </button>
+              <button class="btn btn-soft" onclick="batchDo('snooze')">
+                ⏰ Snooze
+              </button>
+              <button class="btn btn-soft" onclick="clearAllSel()">
+                ✕ Clear
+              </button>
+            </div>
+
+            <div class="inbox-head">
+              <div>
+                <span class="inbox-title" id="ibTitle">Inbox</span
+                ><span class="inbox-sub" id="ibSub"> · 26 conversations</span>
+              </div>
+            </div>
+
             <div class="toolbar" id="toolbar">
               <button
                 class="btn btn-ghost"
-                onclick="toggleSelectAll()"
+                onclick="toggleSelAll()"
                 id="selAllBtn"
-                data-tip="Select all (X)"
               >
                 ☐ All
               </button>
-              <button
-                class="btn btn-ghost"
-                onclick="markAllRead()"
-                data-tip="Mark everything read"
-              >
-                ✓ Read all
+              <button class="btn btn-ghost" onclick="markAllRead()">
+                ✓ Read
               </button>
-              <div class="toolbar-sep"></div>
+              <div class="sep"></div>
               <button
                 class="btn btn-ghost on"
                 onclick="setFilter('all')"
                 id="filtAll"
-                data-tip="Show everything"
               >
                 All
               </button>
@@ -1596,7 +1819,6 @@
                 class="btn btn-ghost"
                 onclick="setFilter('unread')"
                 id="filtUnread"
-                data-tip="Only unread"
               >
                 Unread
               </button>
@@ -1604,19 +1826,19 @@
                 class="btn btn-ghost"
                 onclick="setFilter('urgent')"
                 id="filtUrgent"
-                data-tip="Urgent only"
               >
                 Urgent
               </button>
-              <div class="toolbar-sep"></div>
+              <div class="sep"></div>
               <button
                 class="btn btn-ghost"
-                onclick="setFilter('today')"
+                onclick="goHome();setFolder('inbox');setFilter('today')"
                 id="filtToday"
               >
                 Today
               </button>
             </div>
+
             <div id="threadList"></div>
             <div class="pg" id="pagination">
               <button id="prevBtn" onclick="prevPage()">← Back</button>
@@ -1626,62 +1848,91 @@
           </div>
         </div>
       </div>
+
+      <!-- Detail -->
       <div class="detail" id="detail">
-        <div class="detail-head" id="detailHead"></div>
-        <div class="detail-body" id="detailBody"></div>
+        <div class="dh" id="dh"></div>
+        <div class="db" id="db"></div>
       </div>
     </div>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="bottom-nav" id="bottomNav">
+      <button class="bn-btn on" onclick="goHome();setFolder('inbox')">
+        <span class="ico">📥</span><span>Inbox</span
+        ><span class="bc" id="bnInbox">26</span>
+      </button>
+      <button class="bn-btn" onclick="goHome();setFolder('needs')">
+        <span class="ico">⚡</span><span>Needs</span
+        ><span class="bc" id="bnNeeds">8</span>
+      </button>
+      <button class="bn-btn" onclick="toggleCompose()">
+        <span class="ico">✏️</span><span>New</span>
+      </button>
+      <button class="bn-btn" onclick="goHome();setFolder('flagged')">
+        <span class="ico">★</span><span>Flagged</span
+        ><span class="bc" id="bnFlag">3</span>
+      </button>
+      <button class="bn-btn" onclick="goHome();setFolder('done')">
+        <span class="ico">✓</span><span>Done</span>
+      </button>
+    </nav>
+
     <!-- Toast -->
     <div class="toast" id="toast">
-      <span id="toastMsg"></span>
-      <button id="toastBtn" onclick="toastUndo()">Undo</button>
+      <span id="toastMsg"></span
+      ><button id="toastAct" onclick="undoLast()">Undo</button>
     </div>
+
     <!-- Compose -->
-    <div class="compose" id="compose">
-      <div class="compose-inner">
-        <div class="compose-head">
+    <div class="cm" id="cm">
+      <div class="cm-in">
+        <div class="cm-h">
           <h3>New Message</h3>
           <button onclick="hideCompose()">✕</button>
         </div>
-        <input placeholder="To: recipient@example.com" />
-        <input placeholder="Subject: What's this about?" />
-        <textarea placeholder="Write your message..."></textarea>
-        <div class="compose-foot">
-          <button class="btn btn-ghost" onclick="hideCompose()">Discard</button>
-          <button
+        <input placeholder="To: recipient@example.com" /><input
+          placeholder="Subject: What's this about?"
+        /><textarea placeholder="Write your message..."></textarea>
+        <div class="cm-f">
+          <button class="btn btn-ghost" onclick="hideCompose()">Discard</button
+          ><button
             class="btn btn-primary"
-            onclick="hideCompose();toast('Message sent')"
+            onclick="hideCompose();toast('Message sent ✉')"
           >
             Send →
           </button>
         </div>
       </div>
     </div>
+
     <!-- Walkthrough -->
-    <div class="walk" id="walk">
-      <div class="walk-bg" onclick="hideWalk()"></div>
-      <div class="walk-card">
-        <div class="icon" id="walkIcon">👋</div>
-        <h2 id="walkTitle">Welcome to Zero</h2>
-        <p id="walkDesc">
-          A faster way to process your email. Let's show you around — it'll take
-          10 seconds.
+    <div class="wt" id="wt">
+      <div class="wt-bg" onclick="hideWalk()"></div>
+      <div class="wt-card">
+        <div class="wc" id="wIcon">👋</div>
+        <h2 id="wTitle">You've got mail</h2>
+        <p id="wDesc">
+          36 emails need your attention. Zero helps you fly through them — let's
+          show you how.
         </p>
-        <div class="steps" id="walkSteps">
+        <div class="wt-dots" id="wDots">
           <div class="dot on"></div>
           <div class="dot"></div>
           <div class="dot"></div>
+          <div class="dot"></div>
         </div>
-        <button class="btn btn-primary" id="walkBtn" onclick="nextWalk()">
-          Next →
+        <button class="btn btn-primary" id="wBtn" onclick="nextWalkStep()">
+          Let's go →
         </button>
       </div>
     </div>
+
     <!-- Shortcuts -->
-    <div class="sc-over" id="scOver">
+    <div class="sc" id="sc">
       <div class="sc-bg" onclick="hideShortcuts()"></div>
       <div class="sc-card">
-        <h3>Keyboard shortcuts</h3>
+        <h3>⌨ Shortcuts</h3>
         <div class="sc-grid">
           <div class="sc-k"><kbd>J</kbd><span>Next</span></div>
           <div class="sc-k"><kbd>K</kbd><span>Previous</span></div>
@@ -1693,15 +1944,16 @@
           <div class="sc-k"><kbd>X</kbd><span>Select</span></div>
           <div class="sc-k"><kbd>U</kbd><span>Unread</span></div>
           <div class="sc-k"><kbd>/</kbd><span>Search</span></div>
-          <div class="sc-k"><kbd>.</kbd><span>Focus mode</span></div>
-          <div class="sc-k"><kbd>I</kbd><span>Back to inbox</span></div>
-          <div class="sc-k"><kbd>?</kbd><span>This menu</span></div>
+          <div class="sc-k"><kbd>.</kbd><span>Focus</span></div>
+          <div class="sc-k"><kbd>I</kbd><span>Inbox</span></div>
+          <div class="sc-k"><kbd>?</kbd><span>Help</span></div>
           <div class="sc-k"><kbd>Esc</kbd><span>Back</span></div>
         </div>
       </div>
     </div>
+
     <script>
-      // ─── DATA ──────────────────────────────────────────────────
+      // ─── Data ───────────────────────────────────────────────────
       const AVS = [
         ["Stripe", "#635bff"],
         ["Notion", "#000"],
@@ -1734,279 +1986,287 @@
       const MSGS = [
         {
           f: "Stripe",
-          s: "Your weekly invoice is ready",
+          s: "Weekly invoice ready",
           b:
-            "Hi David,\n\nYour latest Stripe invoice for £247.50 is available.\n\n• Processing fees: £32.40\n• Subscription (Pro): £199.00\n• Add-ons: £16.10\n\nDue: May 5, 2026\n\n— Stripe",
-          t: "bill"
+            "Hi David,\n\nYour Stripe invoice for £247.50 is available.\n\n• Processing: £32.40\n• Subscription: £199.00\n• Add-ons: £16.10\n\nDue May 5\n\n— Stripe",
+          t: "bl"
         },
         {
           f: "Notion",
-          s: "Sarah Kim joined workspace",
+          s: "Sarah joined workspace",
           b:
-            'Hi David,\n\nSarah Kim has been added to the "PlateLogic" workspace.\nRole: Editor\n\n— Notion',
+            'Hi David,\n\nSarah Kim added to "PlateLogic" workspace.\nRole: Editor\n\n— Notion',
           t: "pr"
         },
         {
           f: "Slack",
-          s: "Product sync tomorrow at 3pm",
+          s: "Prod sync tomorrow 3pm",
           b:
-            "Hey team,\n\nReminder: weekly product sync tomorrow at 3pm.\n\nTopics:\n• Sprint review\n• Customer feedback\n• Q3 roadmap\n\n—Tom"
+            "Hey team,\n\nReminder: product sync tomorrow 3pm.\n\nTopics:\n• Sprint review\n• Customer feedback\n• Q3 roadmap\n\n—Tom"
         },
         {
           f: "Kate Chen",
-          s: "Dark mode export — request",
+          s: "Dark mode PDF export",
           b:
-            "Hey David,\n\n3 customer requests this week for dark mode in PDF exports.\n\nCan we fit it in next sprint?\n\nKate",
+            "Hey David,\n\n3 customer requests for dark mode in PDF exports.\n\nCan we fit in next sprint?\n\nKate",
           t: "rv"
         },
         {
           f: "Vercel",
-          s: "Deploy: onboarding v2 ✅",
+          s: "Onboarding v2 deployed ✅",
           b:
-            "Deployment succeeded.\n\nProject: platelogic-web\nCommit: 7a3f8e2 — Fix auth race\n\n✅ Live at platelogic.vercel.app",
+            "Deployment succeeded.\n\nProject: platelogic-web\nCommit: 7a3f8e2\n\n✅ Live",
           t: "pr"
         },
         {
           f: "GitHub",
           s: "PR #247: Fix auth race",
           b:
-            "@david-platelogic requested your review on #247\n\nAdds mutex + retry for concurrent auth requests.\n\n<a>https://github.com/platelogic/scraper/pull/247</a>",
+            "@david requested your review on #247\n\nAdds mutex + retry for concurrent auth.\n\n<a>https://github.com/platelogic/scraper/pull/247</a>",
           t: "rv"
         },
         {
           f: "Figma",
-          s: "Comments on Q2 Strategy",
+          s: "Q2 Strategy comments",
           b:
-            'Marcus Webb: "Love the onboarding flow. Should we test step 3?"\n\n<a>https://figma.com/file/q2-growth</a>',
+            'Marcus: "Love the flow. A/B test step 3?"\n\n<a>https://figma.com/file/q2-growth</a>',
           t: "rv"
         },
         {
           f: "Calendly",
-          s: "Design review — Thursday 2pm",
+          s: "Design review Thu 2pm",
           b: "📅 New event\n\nDesign Review — Q2 Refresh\nThu May 1 · 2pm GMT+1"
         },
         {
           f: "Marcus Webb",
-          s: "Onboarding flow — thoughts",
+          s: "Onboarding thoughts",
           b:
-            "Hey David,\n\n👍 Progress indicator is great\n🤔 Step 3 asks too many questions\n\nWant me to mock an alternative?\n\nMarcus"
+            "Hey David,\n\n👍 Progress indicator\n🤔 Step 3: too many questions\n\nMock alternative?\n\nMarcus"
         },
         {
           f: "Intercom",
-          s: "5 new signups this week",
+          s: "5 signups this week",
           b:
-            "📊 Weekly roundup\n\nNew: 5 subscribers\n• 3 from Google Ads\n• 2 from word-of-mouth\n\n<a>https://app.intercom.com</a>"
+            "📊 Weekly roundup\n\nNew: 5 subscribers\n• 3 from Google Ads\n• 2 from word-of-mouth\n\n<a>Dashboard</a>"
         },
         {
           f: "Jenny Tran",
-          s: "A/B test: v2 wins! 🎯",
+          s: "A/B test: v2 wins 🎯",
           b:
-            "Hey David,\n\n247 users:\n\nCompletion: 62% → 78% 🎯\nTime: 4.2m → 2.8m ✅\nNPS: 32 → 47 💪\n\nRolling out next week.\n\nJenny",
+            "Hey David,\n\n247 users:\n\nCompletion: 62% → 78% 🎯\nTime: 4.2m → 2.8m ✅\nNPS: 32 → 47 💪\n\nJenny",
           t: "pr"
         },
         {
           f: "Security Bot",
           s: "New login from Dublin",
           b:
-            "🔐 Security alert\n\nNew login:\n• Chrome on Windows\n• Dublin, Ireland\n• 10:15 PM GMT+1\n\nIf this wasn't you, secure your account.\n\n<a>https://platelogic.app/security</a>",
+            "🔐 Security alert\n\nNew login:\n• Chrome on Windows\n• Dublin, Ireland\n• 10:15 PM\n\n<a>Secure your account</a>",
           t: "ur"
         },
         {
           f: "Linear",
-          s: "Sprint retro notes",
+          s: "Sprint retro",
           b:
-            "📋 Sprint retro\n\n✅ Onboarding v2 (78% completion)\n✅ 12 bugs resolved\n\n⚠️ PR turnaround: 18h avg\n⚠️ Test coverage: 67%\n\n— Linear"
+            "📋 Retro\n\n✅ Onboarding v2 (78%)\n✅ 12 bugs\n⚠️ PR turnaround: 18h\n⚠️ Coverage: 67%"
         },
         {
           f: "Sarah Kim",
-          s: "Pricing page — your eyes?",
+          s: "Pricing page review?",
           b:
-            "Hi David,\n\nUpdated pricing:\n• Starter: €79/mo\n• Pro: €199/mo (new)\n• Enterprise: Custom\n\n<a>Preview → https://platelogic.app/pricing?preview</a>",
+            "Hi David,\n\nUpdated:\n• Starter: €79/mo\n• Pro: €199/mo (new)\n• Enterprise: Custom\n\n<a>Preview</a>",
           t: "rv"
         },
         {
           f: "Intercom",
-          s: "Ticket #4281: data not syncing",
+          s: "#4281: Data not syncing",
           b:
-            '🎫 High priority\n\nCustomer: Clayton Hotel Cork\n"Tablet stopped syncing — 4 meals not appearing"\n\nResponse needed within 2h.\n\n<a>View → https://app.intercom.com/tickets/4281</a>',
+            '🎫 High priority\n\nClayton Hotel Cork: "Tablet stopped syncing — 4 meals missing"\n\n2h response needed.\n\n<a>View</a>',
           t: "ur"
         },
         {
           f: "Amit Patel",
-          s: "Q3 tools budget — £2,400",
+          s: "Q3 tools £2,400",
           b:
-            "Hi David,\n\nNeed sign-off:\n• Linear upgrade: £600\n• Sentry Pro: £800\n• Notion AI: £480\n• Misc: £520\n\nAmit",
+            "Hi David,\n\nNeed sign-off:\n• Linear: £600\n• Sentry Pro: £800\n• Notion AI: £480\n• Misc: £520\n\nAmit",
           t: "bl"
         },
         {
           f: "Stripe",
-          s: "Payout processed: €1,892.40",
-          b:
-            "Payout notification\n\nAmount: €1,892.40\nDestination: ****4242\n\n— Stripe",
+          s: "Payout €1,892.40",
+          b: "Payout notification\n\nAmount: €1,892.40\n\n— Stripe",
           t: "bl"
         },
         {
           f: "Rachel Lee",
-          s: "Interview: Clayton Hotel Cork",
+          s: "Clayton Hotel interview",
           b:
-            "Hi David,\n\nKey takeaways:\n• Paper logs still 🤯\n• 3h/week data entry\n• No software\n• Budget ~€200/mo\n\nThey want a demo!",
+            "Hi David,\n\n• Paper logs still 🤯\n• 3h/week data entry\n• Budget ~€200/mo\n\nWants a demo!\n\nRachel",
           t: "rv"
         },
         {
           f: "Posthog",
           s: "Retention dropped 8%",
           b:
-            "📊 Alert\n\nRetention: 72% → 64%\n\nPossible:\n• Recent bug\n• New users not onboarding\n\n<a>Dashboard → link</a>",
+            "📊 Alert\n\nRetention: 72% → 64%\n\nPossible causes:\n• Recent deployment bug\n• Onboarding gap\n\n<a>Dashboard</a>",
           t: "ur"
         },
         {
           f: "Nina Eriksson",
-          s: "Hotel partnership deck",
+          s: "Partnership deck draft",
           b:
-            'Hey David,\n\nDraft pitch:\n"Reduce food waste 30% in 90 days or it\'s free"\n\nReview before I send?\n\nNina',
+            'Hey David,\n\nPitch: "Reduce food waste 30% in 90 days"\n\nReview before sending?\n\nNina',
           t: "rv"
         },
         {
           f: "Notion",
-          s: "Q2 OKRs — due Friday",
+          s: "Q2 OKRs due Fri",
           b:
-            "⏰ Reminder\n\nPlease update:\nKR1: 14/20 hotels (70%)\nKR2: 2.4h avg response\nKR3: API v2 in progress\n\n<a>https://notion.so/platelogic/okrs</a>",
+            "⏰ Reminder\n\nKR1: 14/20 (70%)\nKR2: 2.4h avg\nKR3: API v2 in progress\n\n<a>Update now</a>",
           t: "pr"
         },
         {
           f: "Sanjay Gupta",
-          s: "API rate limits proposal",
+          s: "API rate limit proposal",
           b:
-            "Hey David,\n\nPeak usage: 1,200 req/min (limit is 1,000)\nHitting limits 3x/week.\n\nProposal: increase Pro limit to 2,000."
+            "Hey David,\n\nPeak: 1,200 req/min (limit 1,000)\nHitting 3x/week.\n\nProposal: increase to 2,000."
         },
         {
           f: "Tom Adams",
-          s: "Launch checklist v3 — help!",
+          s: "Launch checklist v3",
           b:
-            "Hey David,\n\nNeed input on:\n[ ] In-app walkthrough copy\n[ ] Rollout schedule\n\nEOD Wednesday?\n\nTom"
+            "Hey David,\n\nNeed input on:\n[ ] Walkthrough copy — you?\n[ ] Rollout schedule\n\nEOD Wed?"
         },
         {
           f: "David (Personal)",
-          s: "Dentist Thursday 11am",
+          s: "Dentist Thu 11am",
           b:
-            "Hey,\n\nYou've got the dentist Thursday 11am — Dr. O'Brien on Patrick Street.\n\nDon't forget! 😬"
+            "Hey,\n\nDentist Thursday 11am — Dr. O'Brien, Patrick Street.\n\nDon't forget! 😬"
         },
         {
           f: "Alice Foster",
-          s: "The Montenotte Hotel — lead",
+          s: "Montenotte Hotel lead",
           b:
-            "Hey David,\n\nClient: 3 hotels in Cork\nSpending ~€18K/yr on waste disposal.\n\n15-min intro call this week?\n\nAlice",
+            "Hey David,\n\nClient: 3 Cork hotels\nSpending ~€18K/yr on waste.\n\n15-min call?\n\nAlice",
           t: "rv"
         },
         {
           f: "Hugo Chang",
-          s: "Docs redesign — mockups",
+          s: "Docs redesign mockups",
           b:
-            "Hi David,\n\nFirst pass: sticky sidebar, better search, dark mode.\n\n<a>https://figma.com/file/docs-redesign</a>"
+            "Hi David,\n\nSticky sidebar, better search, dark mode.\n\n<a>https://figma.com/file/docs-redesign</a>"
         },
         {
           f: "Miguel Torres",
-          s: "Apple OAuth: 400 error",
+          s: "Apple OAuth 400 error",
           b:
-            "Hi David,\n\nAll flows pass except Apple OAuth (400 on callback).\n\nLooking into it tomorrow.\n\nMiguel"
+            "Hi David,\n\nAll flows pass except Apple OAuth (400).\n\nInvestigating tomorrow.\n\nMiguel"
         },
         {
           f: "Elena Popescu",
           s: "Dashboard feedback",
           b:
-            "Hey David,\n\n• Waste trend: want week-over-week %\n• Hotel comparison: group filter\n• Export: CSV for date range\n\n<a>Loom: https://loom.com/share/dash</a>"
+            "Hey David,\n\n• Week-over-week % on trend\n• Group filter\n• CSV export by date\n\n<a>Loom</a>"
         },
         {
           f: "GitHub",
-          s: "Issue #312: PDF crash on Safari",
+          s: "Issue #312: PDF Safari crash",
           b:
-            "Bug: PDF export crashes Safari 18+\n\nLikely a date parsing issue.\nChrome & Firefox work fine.\n\n<a>https://github.com/platelogic/webapp/issues/312</a>",
+            "Bug: PDF export crashes Safari 18+\n\nLikely date parsing.\nChrome/Firefox fine.\n\n<a>View issue</a>",
           t: "ur"
         },
         {
           f: "Sam Wilson",
-          s: "Q3: Hotel Group tier",
+          s: "Q3 Hotel Group tier",
           b:
-            "David,\n\nProblem: hotel groups want consolidated dashboards, not per-hotel.\n\nProposal:\n• Multi-property dashboard\n• Group reports\n• Unified billing\n\nCould unlock 10+ deals.\n\nSam"
+            "David,\n\nProblem: groups want consolidated dashboards.\n\nProposal:\n• Multi-property dashboard\n• Group reports\n• Unified billing\n\nSam"
         },
         {
           f: "Zoe Williams",
           s: "Happy birthday! 🎂",
-          b:
-            "David! 🎉\n\nHappy birthday from the team! Check #general on Slack 😄\n\nZoe"
+          b: "David! 🎉\n\nHappy birthday! Check #general on Slack 😄\n\nZoe"
         },
         {
           f: "Calendly",
-          s: "Cancelled: 1:1 tomorrow",
-          b:
-            "❌ Cancelled\n\n1:1 David & Sarah\nWed, Apr 29 · 10am\nRescheduled to Thursday."
+          s: "1:1 cancelled tomorrow",
+          b: "❌ Cancelled\n\nDavid & Sarah 10am\nRescheduled to Thursday."
         },
         {
           f: "Liam Scott",
-          s: "Whitepaper: AI in Hospitality",
+          s: "AI in Hospitality paper",
           b:
-            "David,\n\nRelevant for PlateLogic:\n\n• 67% of hotel groups investing in AI\n• Food waste is top 3 priority\n• Avg ROI: 340% over 18 months\n\n<a>https://hospitalitytech.com/whitepaper-2026</a>"
+            "David,\n\nRelevant:\n• 67% of hotels investing in AI\n• Food waste = top 3 priority\n• ROI: 340% over 18mo\n\n<a>Link</a>"
         },
         {
           f: "Vercel",
-          s: "Staging failed — 2 TS errors",
+          s: "Staging deploy failed",
           b:
-            "❌ Build failed\n\n2 TypeScript errors:\n• PDFExport.tsx:124\n• renderer.tsx:89\n\n<a>↻ Retry → link</a>",
+            "❌ Build failed\n\n2 TS errors:\n• PDFExport.tsx:124\n• renderer.tsx:89\n\n<a>↻ Retry</a>",
           t: "ur"
         },
         {
           f: "Linear",
-          s: "Velocity: 78%",
+          s: "Velocity 78%",
           b:
-            "📊 Sprint velocity\n\nCommitted: 14\nCompleted: 11\n\n✅ Onboarding v2 (8)\n✅ Auth fix (3)\n⏳ Dark mode export (5)\n⏳ OKR dashboard (3)"
+            "📊 Sprint velocity\n\nCommitted: 14\nCompleted: 11\n\n✅ Onboarding v2 (8)\n✅ Auth fix (3)\n⏳ Dark mode (5)"
         }
       ];
 
-      function classify(eml) {
+      function cat(eml) {
         if (eml.t === "ur") return "urgent";
         if (eml.t === "bl") return "bill";
         if (eml.t === "pr") return "progress";
         if (eml.t === "rv") return "needs";
         return "normal";
       }
+      function emlAv(name) {
+        const a = AVS.find(x => x[0] === name);
+        return a ? a[1] : "#666";
+      }
+      function emlInits(name) {
+        return name
+          .split(" ")
+          .map(w => w[0])
+          .join("")
+          .substring(0, 2)
+          .toUpperCase();
+      }
+      function emlEmail(name) {
+        return "hello@" + name.toLowerCase().replace(/[^a-z]/g, "") + ".io";
+      }
 
-      // Build threads
       const ALL = MSGS.map((e, i) => {
-        const a = AVS.find(x => x[0] === e.f) || [e.f, "#666"];
         const unread = Math.random() < 0.35;
         const daysAgo = Math.min(
           Math.floor(Math.random() * 12) + (i < 5 ? i : 1),
           14
         );
-        const date =
+        const ts =
           Date.now() - daysAgo * 86400000 - Math.floor(Math.random() * 3600000);
-        const cat = classify(e);
+        const c = cat(e);
         return {
           id: i,
           from: e.f,
-          fromEmail:
-            "hello@" + e.f.toLowerCase().replace(/[^a-z]/g, "") + ".io",
+          fromEmail: emlEmail(e.f),
           subject: e.s,
           body: e.b,
-          cat,
+          cat: c,
           tag: e.t || null,
-          ts: date,
+          ts,
           unread,
           flagged: Math.random() < 0.1,
           waiting: false,
-          avatarColor: a[1],
+          avatarColor: emlAv(e.f),
           sel: false,
           snippet: e.b
             .split("\n")
             .slice(0, 2)
             .join(" ")
             .replace(/<[^>]+>/g, "")
-            .substring(0, 100),
+            .substring(0, 90),
           snoozed: false,
           done: false
         };
       });
-      // Manual assignments for realism
       ALL[11].unread = true;
       ALL[14].unread = true;
       ALL[17].unread = true;
@@ -2014,7 +2274,7 @@
       ALL[28].unread = true;
       ALL[33].unread = true;
 
-      // ── State ──
+      // ── State ──────────────────────────────────────────────────
       let pg = 1,
         filter = "all",
         folder = "inbox",
@@ -2023,247 +2283,267 @@
         mode = "inbox";
       const PER = 15;
       let dB = null;
-      let sel = new Set(),
-        lastSel = false;
+      let sel = new Set();
       let undoStack = [],
         undoFn = null;
       let viewing = null;
-      const WALK_KEY = "zero_walked_v2";
+      let walkStep = 0;
+      const WALK_KEY = "zero_walked_v3";
+      let swipeState = {};
 
-      // ── Helpers ──
-      function getItems() {
-        let items = [...ALL];
+      // ── Get items ──
+      function items() {
+        let i = [...ALL];
         if (folder === "needs")
-          items = items.filter(t => t.cat === "needs" || t.cat === "urgent");
-        if (folder === "waiting") items = items.filter(t => t.waiting);
-        if (folder === "flagged") items = items.filter(t => t.flagged);
-        if (folder === "snoozed") items = items.filter(t => t.snoozed);
-        if (folder === "done")
-          items = items.filter(t => t.done || t.cat === "bill");
+          i = i.filter(t => t.cat === "needs" || t.cat === "urgent");
+        if (folder === "waiting") i = i.filter(t => t.waiting);
+        if (folder === "flagged") i = i.filter(t => t.flagged);
+        if (folder === "snoozed") i = i.filter(t => t.snoozed);
+        if (folder === "done") i = i.filter(t => t.done || t.cat === "bill");
+        if (folder === "urgent") i = i.filter(t => t.cat === "urgent");
         if (folder === "all") {
         }
         if (search) {
           const q = search.toLowerCase();
-          items = items.filter(
+          i = i.filter(
             t =>
               t.from.toLowerCase().includes(q) ||
               t.subject.toLowerCase().includes(q)
           );
         }
         if (mode === "focus")
-          items = items.filter(
+          i = i.filter(
             t => t.cat === "urgent" || t.cat === "needs" || t.unread
           );
-        if (filter === "unread") items = items.filter(t => t.unread);
-        if (filter === "urgent") items = items.filter(t => t.cat === "urgent");
-        if (filter === "today")
-          items = items.filter(t => Date.now() - t.ts < 86400000);
-        return items;
+        if (filter === "unread") i = i.filter(t => t.unread);
+        if (filter === "urgent") i = i.filter(t => t.cat === "urgent");
+        if (filter === "today") i = i.filter(t => Date.now() - t.ts < 86400000);
+        return i;
       }
 
-      function groupByTime(items) {
-        const now = Date.now(),
-          td = now - 86400000,
-          wk = now - 604800000;
-        const today = [],
-          yesterday = [],
-          week = [],
-          older = [];
-        items.forEach(t => {
-          if (t.ts > td) today.push(t);
-          else if (t.ts > td - 86400000) yesterday.push(t);
-          else if (t.ts > wk) week.push(t);
-          else older.push(t);
+      function groupTime(i) {
+        const n = Date.now(),
+          td = n - 86400000,
+          wk = n - 604800000;
+        const t = [],
+          y = [],
+          w = [],
+          o = [];
+        i.forEach(x => {
+          if (x.ts > td) t.push(x);
+          else if (x.ts > td - 86400000) y.push(x);
+          else if (x.ts > wk) w.push(x);
+          else o.push(x);
         });
         return [
-          ["Today", today],
-          ["Yesterday", yesterday],
-          ["This week", week],
-          ["Older", older]
+          ["Today", t],
+          ["Yesterday", y],
+          ["This Week", w],
+          ["Older", o]
         ].filter(g => g[1].length);
+      }
+
+      function updateProgress() {
+        const total = ALL.length;
+        const done = ALL.filter(t => t.done || t.snoozed).length;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        document.getElementById("progressFill").style.width = pct + "%";
+        const R = 15,
+          circ = 2 * Math.PI * R;
+        const fg = document.getElementById("ringFg");
+        fg.style.strokeDasharray = circ;
+        fg.style.strokeDashoffset = circ - (circ * pct) / 100;
+        document.getElementById("ringLabel").textContent = pct + "%";
+        const processed = done,
+          remaining = total - done;
+        document.getElementById("inboxStat").textContent =
+          processed + " done · " + remaining + " to go";
+        document.getElementById("inboxSubStat").textContent =
+          "🔥 12-day streak · 142 this week";
+        const sug = document.getElementById("inboxSuggestion");
+        const urgent = ALL.filter(t => t.cat === "urgent" && !t.done).length;
+        const needs = ALL.filter(t => t.cat === "needs" && !t.done).length;
+        const unread = ALL.filter(t => t.unread && !t.done).length;
+        if (urgent)
+          sug.textContent = "🔴 " + urgent + " urgent — handle those first";
+        else if (needs) sug.textContent = "⚡ " + needs + " need replies";
+        else if (unread) sug.textContent = "📬 " + unread + " unread";
+        else sug.textContent = "🎉 Almost there!";
       }
 
       // ── Render ──
       function render() {
-        const items = getItems();
-        const total = items.length,
+        const i = items();
+        const total = i.length,
           tp = Math.ceil(total / PER) || 1;
         if (pg > tp) pg = tp;
         const start = (pg - 1) * PER,
-          page = items.slice(start, start + PER);
+          page = i.slice(start, start + PER);
         const uc = ALL.filter(t => !t.done && !t.snoozed && t.unread).length;
 
+        // Progress
+        updateProgress();
+
         // Counts
-        ["Inbox", "Needs", "Wait", "Flag", "Snooze", "Done", "All"].forEach(
-          k => {
-            const fn = {
-              Inbox: () => ALL.filter(t => !t.done).length,
-              Needs: () =>
-                ALL.filter(
-                  t => (t.cat === "needs" || t.cat === "urgent") && !t.done
-                ).length,
-              Wait: () => ALL.filter(t => t.waiting).length,
-              Flag: () => ALL.filter(t => t.flagged).length,
-              Snooze: () => ALL.filter(t => t.snoozed).length,
-              Done: () => ALL.filter(t => t.done).length,
-              All: () => ALL.length
-            }[k];
-            document.getElementById("c" + k).textContent = fn();
+        [
+          "Inbox",
+          "Needs",
+          "Wait",
+          "Flag",
+          "Snooze",
+          "Done",
+          "All",
+          "Urgent"
+        ].forEach(k => {
+          const fn = {
+            Inbox: () => ALL.filter(t => !t.done).length,
+            Needs: () =>
+              ALL.filter(
+                t => (t.cat === "needs" || t.cat === "urgent") && !t.done
+              ).length,
+            Wait: () => ALL.filter(t => t.waiting).length,
+            Flag: () => ALL.filter(t => t.flagged).length,
+            Snooze: () => ALL.filter(t => t.snoozed).length,
+            Done: () => ALL.filter(t => t.done && !t.snoozed).length,
+            All: () => ALL.length,
+            Urgent: () => ALL.filter(t => t.cat === "urgent" && !t.done).length
+          }[k];
+          const el = document.getElementById("c" + k);
+          if (el) el.textContent = fn();
+          // Bottom nav badges
+          const bn = { Inbox: "bnInbox", Needs: "bnNeeds", Flag: "bnFlag" }[k];
+          if (bn) {
+            const e2 = document.getElementById(bn);
+            if (e2) e2.textContent = fn();
           }
-        );
+        });
 
         // Nav active
-        document.querySelectorAll(".nav-item").forEach(el => {
-          el.classList.toggle("on", el.dataset.folder === folder);
-        });
-        document.querySelectorAll(".mode-tab").forEach(b =>
-          b.classList.toggle(
-            "on",
-            b.textContent
-              .trim()
-              .toLowerCase()
-              .includes(mode)
-          )
-        );
-
-        // Focus bar
-        const fc = ALL.filter(t => t.cat === "urgent" || t.cat === "needs")
-          .length;
-        document.getElementById("focusCount").textContent = fc;
         document
-          .getElementById("focusBar")
-          .classList.toggle("on", mode === "focus");
-
-        // Batch bar
-        document.getElementById("batchCount").textContent = sel.size;
+          .querySelectorAll(".nav-item")
+          .forEach(el =>
+            el.classList.toggle("on", el.dataset.folder === folder)
+          );
         document
-          .getElementById("batchBar")
-          .classList.toggle("show", sel.size > 0);
+          .querySelectorAll(".hdr-tab")
+          .forEach(b =>
+            b.classList.toggle("on", b.textContent.toLowerCase().includes(mode))
+          );
 
         // Filter buttons
-        ["filtAll", "filtUnread", "filtUrgent", "filtToday"].forEach(k => {
-          const f = k.replace("filt", "").toLowerCase();
-          document
-            .getElementById(k)
-            .classList.toggle(
+        ["All", "Unread", "Urgent", "Today"].forEach(k => {
+          const el = document.getElementById("filt" + k);
+          if (el)
+            el.classList.toggle(
               "on",
-              f === filter || (filter === "all" && k === "filtAll")
+              k.toLowerCase() === filter || (filter === "all" && k === "All")
             );
         });
 
-        // Title
         const titles = {
           inbox: "Inbox",
           needs: "Needs Reply",
           waiting: "Waiting",
+          urgent: "Urgent",
           flagged: "Flagged",
           snoozed: "Snoozed",
           done: "Done",
           all: "All Mail"
         };
-        document.getElementById("inboxTitle").textContent =
+        document.getElementById("ibTitle").textContent =
           titles[folder] || "Inbox";
-        document.getElementById("inboxSub").textContent = search
+        document.getElementById("ibSub").textContent = search
           ? `· "${search}"`
           : `· ${total} conversations`;
 
-        // Select all button
-        document.getElementById("selAllBtn").textContent = lastSel
+        // Select all btn
+        const pageItems = i.slice((pg - 1) * PER, pg * PER);
+        const allSel =
+          pageItems.length > 0 && pageItems.every(t => sel.has(t.id));
+        document.getElementById("selAllBtn").textContent = allSel
           ? "☑ All"
           : "☐ All";
 
+        // Batch bar
+        document.getElementById("batchCount").textContent = sel.size;
+        document.getElementById("batch").classList.toggle("show", sel.size > 0);
+
         const cont = document.getElementById("threadList");
         if (!page.length) {
-          cont.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div><h3>All clear</h3><p>${
+          cont.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div><h3>All clear!</h3><p>${
             search
               ? 'No results for "' + search + '"'
-              : "Nothing here right now — nice work"
-          }</p><div class="hint">${
-            search ? "Try a different search" : "Press N to compose something"
+              : "Nothing needs your attention right now"
+          }</p><div class="tip">${
+            search
+              ? "Try a different search"
+              : "Press N to compose something new"
           }</div></div>`;
           document.getElementById("pagination").style.display = "none";
           return;
         }
         document.getElementById("pagination").style.display = "flex";
 
-        const groups = groupByTime(page);
+        const groups = groupTime(page);
         cont.innerHTML = groups
-          .map(g => {
-            const [label, items] = g;
-            return `<div class="time-group">${label}</div><div class="threads">${items
-              .map(t => {
-                const inits = t.from
-                  .split(" ")
-                  .map(w => w[0])
-                  .join("")
-                  .substring(0, 2);
-                const recent = Date.now() - t.ts < 172800000;
-                const ds = recent
-                  ? new Date(t.ts).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    })
-                  : new Date(t.ts).toLocaleDateString([], {
-                      month: "short",
-                      day: "numeric"
-                    });
-                const isSel = sel.has(t.id);
-                return `<div class="thread-row ${t.unread ? "fr" : ""} ${
-                  t.done ? "done" : ""
-                } ${isSel ? "cb-active" : ""}" onclick="openThread(${
-                  t.id
-                })" data-id="${t.id}">
-        <div class="cb ${
-          isSel ? "on" : ""
-        }" onclick="event.stopPropagation();toggleSel(${
-                  t.id
-                })" data-tip="Select (X)"></div>
-        <div class="th-av" style="background:${t.avatarColor}">${inits}</div>
-        <div class="th-body">
-          <div class="th-from">${t.from}</div>
-          <div class="th-sub">${t.subject}</div>
-          <div class="th-tags">
-            ${
-              t.cat === "urgent" ? '<span class="tag urgent">Urgent</span>' : ""
-            }
-            ${
-              t.cat === "needs"
-                ? '<span class="tag review">Needs reply</span>'
-                : ""
-            }
-            ${t.cat === "bill" ? '<span class="tag bill">Invoice</span>' : ""}
-            ${t.waiting ? '<span class="tag wait">Waiting</span>' : ""}
-            ${
-              t.done
-                ? '<span class="tag" style="background:var(--green-bg);color:var(--green)">Done</span>'
-                : ""
-            }
-          </div>
-          <div class="th-snip">${t.snippet}</div>
-        </div>
-        <div class="th-meta">
-          <div class="th-date">${ds}</div>
-          ${
-            t.flagged
-              ? '<span style="color:var(--amber);font-size:8px">★</span>'
-              : ""
-          }
-        </div>
-        <div class="qa-wrap">
-          <button class="qa-btn" onclick="event.stopPropagation();doDone(${
-            t.id
-          })" data-tip="Done (E)">✓</button>
-          <button class="qa-btn" onclick="event.stopPropagation();doSnooze(${
-            t.id
-          })" data-tip="Snooze (S)">⏰</button>
-          <button class="qa-btn" onclick="event.stopPropagation();doFlag(${
-            t.id
-          })" data-tip="Flag (F)">${t.flagged ? "★" : "☆"}</button>
-        </div>
-      </div>`;
-              })
-              .join("")}</div>`;
-          })
+          .map(
+            g =>
+              `<div class="time-head">${g[0]}</div><div class="threads">${g[1]
+                .map(t => {
+                  const inits = emlInits(t.from);
+                  const recent = Date.now() - t.ts < 172800000;
+                  const ds = recent
+                    ? new Date(t.ts).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })
+                    : new Date(t.ts).toLocaleDateString([], {
+                        month: "short",
+                        day: "numeric"
+                      });
+                  return `<div class="thread-row ${t.unread ? "unread" : ""} ${
+                    t.done ? "done" : ""
+                  }" onclick="openThread(${t.id})" data-id="${t.id}">
+      <div class="cb ${
+        sel.has(t.id) ? "on" : ""
+      }" onclick="event.stopPropagation();toggleSel(${t.id})"></div>
+      <div class="av" style="background:${t.avatarColor}">${inits}${
+                    t.cat === "urgent" && !t.done
+                      ? '<div class="urg-dot"></div>'
+                      : ""
+                  }</div>
+      <div class="tb">
+        <div class="tf">${t.from}</div>
+        <div class="ts">${t.subject}</div>
+        <div class="tt">${
+          t.cat === "urgent" ? '<span class="tag urgent">Urgent</span>' : ""
+        }${
+                    t.cat === "needs" && !t.done
+                      ? '<span class="tag review">Reply</span>'
+                      : ""
+                  }${
+                    t.cat === "bill"
+                      ? '<span class="tag bill">Invoice</span>'
+                      : ""
+                  }${t.waiting ? '<span class="tag wait">Waiting</span>' : ""}${
+                    t.done ? '<span class="tag done-t">✓ Done</span>' : ""
+                  }</div>
+        <div class="tn">${t.snippet}</div>
+      </div>
+      <div class="tm"><div class="td">${ds}</div>${
+                    t.flagged ? '<div class="tf2">★</div>' : ""
+                  }</div>
+      <div class="qa"><button class="qab" onclick="event.stopPropagation();quickDone(${
+        t.id
+      })" title="Done (E)">✓</button><button class="qab" onclick="event.stopPropagation();quickSnooze(${
+                    t.id
+                  })" title="Snooze (S)">⏰</button><button class="qab" onclick="event.stopPropagation();quickFlag(${
+                    t.id
+                  })" title="Flag (F)">${t.flagged ? "★" : "☆"}</button></div>
+    </div>`;
+                })
+                .join("")}</div>`
+          )
           .join("");
 
         document.getElementById("pageLabel").textContent = `${pg} of ${tp}`;
@@ -2271,22 +2551,17 @@
         document.getElementById("nextBtn").disabled = pg >= tp;
       }
 
-      // ── Thread interaction ──
+      // ── Thread detail ──
       function openThread(id) {
         const t = ALL.find(x => x.id === id);
         if (!t) return;
         t.unread = false;
         selId = id;
-        document.getElementById("app").classList.add("detail-open");
+        document.getElementById("app").classList.add("detail-on");
         document.getElementById("inboxView").style.display = "none";
         document.getElementById("detail").classList.add("on");
         const s = AVS.find(x => x[0] === t.from) || [t.from, "#666"];
-        const inits = t.from
-          .split(" ")
-          .map(w => w[0])
-          .join("")
-          .substring(0, 2)
-          .toUpperCase();
+        const inits = emlInits(t.from);
         const fd = new Date(t.ts).toLocaleDateString([], {
           weekday: "long",
           month: "long",
@@ -2297,34 +2572,29 @@
         const idx = ALL.indexOf(t);
         viewing = t;
 
-        document.getElementById("detailHead").innerHTML = `
-    <div class="detail-nav">
-      <button class="detail-back" onclick="goHome()">← All ${folder}</button>
-      <div class="detail-nav-r">
-        <button class="detail-nav-btn" onclick="openThread(${
+        document.getElementById(
+          "dh"
+        ).innerHTML = `<div class="dn"><button class="d-back" onclick="goHome()">← ${
+          folder === "inbox" ? "Inbox" : folder
+        }</button><div class="dnr"><button class="dnb" onclick="openThread(${
           ALL.at((idx - 1 + ALL.length) % ALL.length).id
-        })" ${idx === 0 ? "disabled" : ""}>←</button>
-        <button class="detail-nav-btn" onclick="openThread(${
+        })" ${
+          idx === 0 ? "disabled" : ""
+        }>←</button><button class="dnb" onclick="openThread(${
           ALL.at((idx + 1) % ALL.length).id
-        })" ${idx === ALL.length - 1 ? "disabled" : ""}>→</button>
-      </div>
-    </div>
-    <div class="detail-subj">${t.subject}</div>
-    <div class="detail-acts">
-      <button class="btn btn-primary" onclick="qrOpen()">✉ Reply</button>
-      <button class="btn btn-soft" onclick="doDone(${
-        t.id
-      });goHome()">✓ Done</button>
-      <button class="btn btn-soft" onclick="doSnooze(${
-        t.id
-      });goHome()">⏰ Snooze</button>
-      <button class="btn btn-soft" onclick="doFlag(${t.id})">${
-          t.flagged ? "★ Unflag" : "☆ Flag"
-        }</button>
-    </div>
-  `;
+        })" ${
+          idx === ALL.length - 1 ? "disabled" : ""
+        }>→</button></div></div><div class="ds">${
+          t.subject
+        }</div><div class="da"><button class="btn btn-primary" onclick="qrFocus()">✉ Reply</button><button class="btn btn-soft" onclick="quickDone(${
+          t.id
+        });goHome()">✓ Done</button><button class="btn btn-soft" onclick="quickSnooze(${
+          t.id
+        });goHome()">⏰ Snooze</button><button class="btn btn-soft" onclick="quickFlag(${
+          t.id
+        })">${t.flagged ? "★" : "☆"}</button></div>`;
 
-        let h = `<div class="detail-sender"><div class="detail-sav" style="background:${t.avatarColor}">${inits}</div><div class="detail-sinfo"><div class="detail-sname">${t.from}</div><div class="detail-sm">${t.fromEmail} · ${fd}</div></div></div><div class="detail-text">`;
+        let h = `<div class="d-sender"><div class="d-sav" style="background:${t.avatarColor}">${inits}</div><div class="d-si"><div class="d-sn">${t.from}</div><div class="d-sm">${t.fromEmail} · ${fd}</div></div></div><div class="dtx">`;
         const lines = t.body.split("\n");
         let iq = false;
         for (const ln of lines) {
@@ -2355,7 +2625,7 @@
           if (tr.startsWith("<a>")) {
             const m = tr.match(/<a>([^<]+)<\/a>/);
             h += m
-              ? '<div style="margin:4px 0"><a href="#" style="color:var(--accent);font-size:11px">' +
+              ? '<div style="margin:3px 0"><a href="#" style="color:var(--accent);font-size:10px">' +
                 m[1] +
                 "</a></div>"
               : "<p>" + tr + "</p>";
@@ -2363,7 +2633,7 @@
           }
           if (tr.match(/^[─=]{3,}/)) {
             h +=
-              '<div style="color:var(--border);font-size:8px;margin:4px 0">─ ─ ─ ─</div>';
+              '<div style="color:var(--border);font-size:7px;margin:3px 0">─ ─ ─ ─</div>';
             continue;
           }
           if (tr.startsWith("—")) {
@@ -2373,84 +2643,89 @@
           h += "<p>" + tr + "</p>";
         }
         if (iq) h += "</div>";
-        h += `</div>
-    <div class="qr on">
-      <textarea id="qrText" placeholder="Quick reply..." rows="2"></textarea>
-      <div class="qr-foot">
-        <div class="qr-snippets">
-          <button onclick="insSnip('Thanks, noted!')">Noted</button>
-          <button onclick="insSnip('Will review and get back to you.')">Will review</button>
-          <button onclick="insSnip('On it.')">On it</button>
-          <button onclick="insSnip('Looks good.')">LGTM</button>
-          <button onclick="insSnip('Let\'s discuss in standup.')">Standup</button>
-        </div>
-        <button class="btn btn-primary" onclick="sendQR()">Send</button>
-      </div>
-    </div>`;
-        document.getElementById("detailBody").innerHTML = h;
-        document.getElementById("detailBody").scrollTop = 0;
+        h += `</div><div class="qr on"><textarea id="qrT" placeholder="Quick reply..." rows="2"></textarea><div class="qrf"><div class="qrsnip"><button onclick="insSnip('Thanks, noted!')">Noted</button><button onclick="insSnip('Will review.')">Will review</button><button onclick="insSnip('On it.')">On it</button><button onclick="insSnip('Looks good.')">LGTM</button></div><button class="btn btn-primary" onclick="sendQR()">Send</button></div></div>`;
+        document.getElementById("db").innerHTML = h;
+        document.getElementById("db").scrollTop = 0;
         window.location.hash = "thread/" + id;
       }
 
       function goHome() {
-        document.getElementById("app").classList.remove("detail-open");
+        document.getElementById("app").classList.remove("detail-on");
         document.getElementById("detail").classList.remove("on");
         document.getElementById("inboxView").style.display = "flex";
         render();
         window.location.hash = "";
         viewing = null;
+        document.getElementById("sidebar").classList.remove("open");
       }
 
-      // ── Quick reply ──
-      function qrOpen() {
+      // ── Quick actions ──
+      function quickDone(id) {
+        const t = ALL.find(x => x.id === id);
+        if (!t) return;
+        t.done = !t.done;
+        t.unread = false;
+        toast(t.done ? "Done ✓" : "Undone");
+        render();
+        zeroCheck();
+      }
+      function quickSnooze(id) {
+        const t = ALL.find(x => x.id === id);
+        if (!t) return;
+        t.snoozed = true;
+        t.unread = false;
+        toast("Snoozed for later");
+        render();
+      }
+      function quickFlag(id) {
+        const t = ALL.find(x => x.id === id);
+        if (!t) return;
+        t.flagged = !t.flagged;
+        render();
+      }
+
+      // ── QR ──
+      function qrFocus() {
         setTimeout(() => {
-          const el = document.getElementById("qrText");
-          if (el) el.focus();
+          const e = document.getElementById("qrT");
+          if (e) e.focus();
         }, 50);
       }
       function insSnip(t) {
-        const el = document.getElementById("qrText");
-        if (el) {
-          el.value = t;
-          el.focus();
+        const e = document.getElementById("qrT");
+        if (e) {
+          e.value = t;
+          e.focus();
         }
       }
       function sendQR() {
-        if (!viewing) return;
-        viewing.waiting = true;
-        toast("Reply sent");
-        goHome();
+        if (viewing) {
+          viewing.waiting = true;
+          toast("Sent!");
+          goHome();
+        }
       }
+
       // ── Selection ──
       function toggleSel(id) {
         sel.has(id) ? sel.delete(id) : sel.add(id);
-        lastSel =
-          sel.size ===
-          getItems().slice((pg - 1) * PER, (pg - 1) * PER + PER).length;
         render();
       }
-      function toggleSelectAll() {
-        const page = getItems().slice((pg - 1) * PER, (pg - 1) * PER + PER);
-        if (sel.size === page.length) {
-          sel.clear();
-          lastSel = false;
-        } else {
-          page.forEach(t => sel.add(t.id));
-          lastSel = true;
-        }
+      function toggleSelAll() {
+        const p = items().slice((pg - 1) * PER, pg * PER);
+        const all = p.every(t => sel.has(t.id));
+        if (all) p.forEach(t => sel.delete(t.id));
+        else p.forEach(t => sel.add(t.id));
         render();
       }
-      function clearSel() {
+      function clearAllSel() {
         sel.clear();
-        lastSel = false;
         render();
       }
-
-      // ── Batch ──
-      function batchDo(action) {
+      function batchDo(a) {
         const ids = [...sel];
-        let n = ids.length;
-        if (action === "done") {
+        const n = ids.length;
+        if (a === "done") {
           ids.forEach(id => {
             const t = ALL.find(x => x.id === id);
             if (t) {
@@ -2459,9 +2734,9 @@
             }
           });
           sel.clear();
-          toast(n + " done");
+          toast(n + " done ✓");
         }
-        if (action === "read") {
+        if (a === "read") {
           ids.forEach(id => {
             const t = ALL.find(x => x.id === id);
             if (t) t.unread = false;
@@ -2469,15 +2744,15 @@
           sel.clear();
           toast(n + " marked read");
         }
-        if (action === "flag") {
+        if (a === "flag") {
           ids.forEach(id => {
             const t = ALL.find(x => x.id === id);
             if (t) t.flagged = !t.flagged;
           });
           sel.clear();
-          toast("Toggled flag for " + n);
+          toast("Flagged " + n);
         }
-        if (action === "snooze") {
+        if (a === "snooze") {
           ids.forEach(id => {
             const t = ALL.find(x => x.id === id);
             if (t) {
@@ -2490,41 +2765,20 @@
         }
         render();
       }
-
-      // ── Quick actions ──
-      function doDone(id) {
-        const t = ALL.find(x => x.id === id);
-        if (!t) return;
-        const was = t.done;
-        t.done = !t.done;
-        t.unread = false;
-        toast(t.done ? "Done ✓" : "Undone");
-        undoStack.push(() => {
-          t.done = was;
-        });
+      function markAllRead() {
+        items()
+          .filter(t => t.unread)
+          .forEach(t => (t.unread = false));
         render();
-        zeroCheck();
-      }
-      function doSnooze(id) {
-        const t = ALL.find(x => x.id === id);
-        if (!t) return;
-        t.snoozed = true;
-        t.unread = false;
-        toast("Snoozed");
-        render();
-      }
-      function doFlag(id) {
-        const t = ALL.find(x => x.id === id);
-        if (!t) return;
-        t.flagged = !t.flagged;
-        render();
+        toast("All read ✓");
       }
 
       function setFolder(f) {
         folder = f;
         pg = 1;
         search = "";
-        document.getElementById("sSearch").value = "";
+        document.getElementById("sIn").value = "";
+        document.getElementById("sidebar").classList.remove("open");
         render();
       }
       function setFilter(f) {
@@ -2545,7 +2799,7 @@
         }
       }
       function nextPage() {
-        if (pg < Math.ceil(getItems().length / PER)) {
+        if (pg < Math.ceil(items().length / PER)) {
           pg++;
           render();
           document.getElementById("scroll").scrollTop = 0;
@@ -2554,149 +2808,151 @@
       function debouncedSearch() {
         clearTimeout(dB);
         dB = setTimeout(() => {
-          search = document.getElementById("sSearch").value;
+          search = document.getElementById("sIn").value;
           pg = 1;
           render();
         }, 200);
       }
-      function markAllRead() {
-        getItems()
-          .filter(t => t.unread)
-          .forEach(t => (t.unread = false));
-        render();
-        toast("All marked read");
-      }
 
       function zeroCheck() {
         const left = ALL.filter(t => !t.done && !t.snoozed).length;
-        if (left === 0) setTimeout(showParty, 400);
+        if (left === 0) setTimeout(party, 500);
       }
-      function showParty() {
+      function party() {
         const d = document.createElement("div");
         d.style.cssText =
-          "position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;animation:ei .4s";
-        d.innerHTML = `<div style="position:absolute;inset:0;background:rgba(0,0,0,.25);backdrop-filter:blur(4px)" onclick="this.parentElement.remove()"></div>
-    <div style="position:relative;background:var(--surface);border-radius:14px;padding:32px 36px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.12);max-width:340px;width:90vw">
-      <div style="font-size:52px;margin-bottom:8px">🎉</div>
-      <h2 style="font-size:20px;font-weight:800;margin-bottom:2px">Inbox Zero!</h2>
-      <p style="font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:12px">Everything handled. You're ahead of 94% of users.</p>
-      <div style="font-size:10px;color:var(--text2);background:var(--bg);padding:6px 10px;border-radius:6px;margin-bottom:12px">🔥 12-day streak · 142 processed this week</div>
-      <button class="btn btn-primary" onclick="this.parentElement.parentElement.remove()" style="font-size:11px;padding:6px 16px">Keep going →</button>
+          "position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;animation:ein .4s";
+        d.innerHTML = `<div style="position:absolute;inset:0;background:rgba(0,0,0,.2);backdrop-filter:blur(4px)" onclick="this.remove()"></div>
+    <div style="position:relative;background:var(--surface);border-radius:14px;padding:28px 32px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.1);max-width:320px;width:90vw">
+      <div style="font-size:48px;margin-bottom:8px">🎉</div>
+      <h2 style="font-size:18px;font-weight:800;margin-bottom:2px">Inbox Zero!</h2>
+      <p style="font-size:10px;color:var(--text2);line-height:1.5;margin-bottom:10px">Every email handled. You're ahead of 94% of users.</p>
+      <div style="font-size:9px;color:var(--text2);background:var(--bg);padding:5px 10px;border-radius:6px;margin-bottom:10px">🔥 12-day streak</div>
+      <button class="btn btn-primary" style="font-size:10px;padding:6px 14px" onclick="this.parentElement.parentElement.remove()">Keep going →</button>
     </div>`;
         document.body.appendChild(d);
-        // Confetti
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 30; i++) {
           const c = document.createElement("div");
           c.style.cssText = `position:fixed;width:${3 +
-            Math.random() * 5}px;height:${3 +
-            Math.random() * 5}px;left:${Math.random() *
+            Math.random() * 4}px;height:${3 +
+            Math.random() * 4}px;left:${Math.random() *
             100}%;top:-10px;background:${
-            ["#4f6ef7", "#8b5cf6", "#22c55e", "#f59e0b", "#ef4444"][
+            ["#4f6ef7", "#8b5cf6", "#16a34a", "#f59e0b", "#ef4444"][
               Math.floor(Math.random() * 5)
             ]
-          };border-radius:${
-            Math.random() > 0.5 ? "50%" : "2px"
-          };z-index:201;pointer-events:none;animation:cf${Math.random() * 2 +
-            2}s linear forwards`;
-          c.style.animationDelay = Math.random() * 1.2 + "s";
+          };border-radius:50%;z-index:201;pointer-events:none;animation:cf${Math.random() *
+            2 +
+            1}s linear forwards;animation-delay:${Math.random() * 1}s`;
           document.head.insertAdjacentHTML(
             "beforeend",
-            "<style>@keyframes cf{0%{transform:translateY(0) rotate(0deg);opacity:1}0%to{transform:translateY(100vh) rotate(720deg);opacity:0}}@keyframes cf2{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(-540deg);opacity:0}}</style>"
+            "<style>@keyframes cf{0%{transform:translateY(0);opacity:1}100%{transform:translateY(100vh);opacity:0}}</style>"
           );
           document.body.appendChild(c);
           setTimeout(() => c.remove(), 5000);
         }
       }
 
+      function zeroRingClick() {
+        document.getElementById("inboxSuggestion").style.opacity = ".6";
+        setTimeout(
+          () =>
+            (document.getElementById("inboxSuggestion").style.opacity = "1"),
+          300
+        );
+        setFilter("unread");
+      }
+
+      // ── Sidebar toggle ──
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+      }
+
       // ── Toast ──
-      function toast(msg, undoable = false) {
+      function toast(msg, undoable = true) {
         const el = document.getElementById("toast");
         document.getElementById("toastMsg").textContent = msg;
-        if (undoable) {
-          document.getElementById("toastBtn").style.display = "inline-block";
-        } else {
-          document.getElementById("toastBtn").style.display = "none";
-        }
+        document.getElementById("toastAct").style.display = undoable
+          ? "inline-block"
+          : "none";
         el.classList.add("show");
-        clearTimeout(window._toast_timer);
-        window._toast_timer = setTimeout(
-          () => el.classList.remove("show"),
-          3000
-        );
+        clearTimeout(window._tt);
+        window._tt = setTimeout(() => el.classList.remove("show"), 3500);
       }
-      function toastUndo() {
-        const fn = undoStack.pop();
-        if (fn) fn();
+      function undoLast() {
         document.getElementById("toast").classList.remove("show");
         render();
       }
 
       // ── Compose ──
       function toggleCompose() {
-        document.getElementById("compose").classList.toggle("on");
+        document.getElementById("cm").classList.toggle("on");
       }
       function hideCompose() {
-        document.getElementById("compose").classList.remove("on");
+        document.getElementById("cm").classList.remove("on");
       }
 
       // ── Walkthrough ──
-      let walkStep = 0;
       function showWalk() {
-        document.getElementById("walk").classList.add("show");
+        document.getElementById("wt").classList.add("show");
       }
       function hideWalk() {
-        document.getElementById("walk").classList.remove("show");
+        document.getElementById("wt").classList.remove("show");
       }
-      const WALK = [
+      const WALK_DATA = [
         {
           icon: "👋",
-          title: "Welcome to Zero",
+          title: "You've got mail",
           desc:
-            "A faster way to process your email. Let's take 10 seconds to get you started."
-        },
-        {
-          icon: "⚡",
-          title: "Clear your inbox fast",
-          desc:
-            "Hover over any email and click ✓ to mark it done, ⏰ to snooze it, or ★ to flag. No opening needed."
-        },
-        {
-          icon: "⌨",
-          title: "Stay on your keyboard",
-          desc:
-            "Press <b>J</b> to go down, <b>E</b> to mark done, <b>S</b> to snooze, <b>R</b> to reply. Press <b>?</b> anytime for the full list."
+            "36 emails are waiting for you. Zero helps you process them fast — no folders, no clutter, just done."
         },
         {
           icon: "🎯",
-          title: "Focus mode",
+          title: "See your progress",
           desc:
-            "Click ⚡Focus in the header to see only what needs your attention right now. Everything else waits."
+            "The ring at the top shows how close you are to Inbox Zero. Click it to jump to unread emails."
+        },
+        {
+          icon: "⚡",
+          title: "Process without opening",
+          desc:
+            "Hover any email and click ✓ to mark it done, ⏰ to snooze, or ★ to flag. No clicking needed."
+        },
+        {
+          icon: "⌨",
+          title: "Keyboard shortcuts",
+          desc:
+            "Press J/K to navigate, E to finish, S to snooze. Press ? anytime to see them all."
         }
       ];
-      function nextWalk() {
+      function nextWalkStep() {
         walkStep++;
-        if (walkStep >= WALK.length) {
+        if (walkStep >= WALK_DATA.length) {
           hideWalk();
           localStorage.setItem(WALK_KEY, "1");
           return;
         }
-        const w = WALK[walkStep];
-        document.getElementById("walkIcon").textContent = w.icon;
-        document.getElementById("walkTitle").textContent = w.title;
-        document.getElementById("walkDesc").innerHTML = w.desc;
-        document.getElementById("walkBtn").textContent =
-          walkStep < WALK.length - 1 ? "Next →" : "Got it!";
-        document.querySelectorAll("#walkSteps .dot").forEach((d, i) => {
-          d.className = "dot" + (i === walkStep ? " on" : "");
-        });
+        const w = WALK_DATA[walkStep];
+        const wIcon = document.getElementById("wIcon"),
+          wTitle = document.getElementById("wTitle"),
+          wDesc = document.getElementById("wDesc"),
+          wBtn = document.getElementById("wBtn"),
+          wDots = document.getElementById("wDots");
+        wIcon.textContent = w.icon;
+        wTitle.textContent = w.title;
+        wDesc.innerHTML = w.desc;
+        wBtn.textContent =
+          walkStep < WALK_DATA.length - 1 ? "Next →" : "Got it!";
+        wDots.innerHTML = WALK_DATA.map(
+          (_, i) => `<div class="dot ${i === walkStep ? "on" : ""}"></div>`
+        ).join("");
       }
 
       // ── Shortcuts ──
       function showShortcuts() {
-        document.getElementById("scOver").classList.add("show");
+        document.getElementById("sc").classList.add("show");
       }
       function hideShortcuts() {
-        document.getElementById("scOver").classList.remove("show");
+        document.getElementById("sc").classList.remove("show");
       }
 
       // ── Keyboard ──
@@ -2716,48 +2972,48 @@
         if (e.key === "n" || e.key === "N") toggleCompose();
         if (e.key === "i" || e.key === "I") goHome();
         if (e.key === "r" || e.key === "R") {
-          qrOpen();
+          qrFocus();
         }
         if (e.key === "e" || e.key === "E") {
           if (selId !== null) {
-            doDone(selId);
-            const items = getItems();
-            const idx = items.findIndex(t => t.id === selId);
-            if (idx < items.length - 1) selId = items[idx + 1].id;
-            else if (idx > 0) selId = items[idx - 1].id;
+            quickDone(selId);
+            const i = items();
+            const idx = i.findIndex(t => t.id === selId);
+            if (idx < i.length - 1) selId = i[idx + 1].id;
+            else if (idx > 0) selId = i[idx - 1].id;
             else selId = null;
             render();
           }
         }
         if (e.key === "s" || e.key === "S") {
           if (selId !== null) {
-            doSnooze(selId);
+            quickSnooze(selId);
             render();
           }
         }
         if (e.key === "f" || e.key === "F") {
           if (selId !== null) {
-            doFlag(selId);
+            quickFlag(selId);
             render();
           }
         }
         if (e.key === "x" || e.key === "X") {
           if (selId !== null) {
             toggleSel(selId);
-            const items = getItems();
-            const idx = items.findIndex(t => t.id === selId);
-            if (idx < items.length - 1) {
-              selId = items[idx + 1].id;
+            const i = items();
+            const idx = i.findIndex(t => t.id === selId);
+            if (idx < i.length - 1) {
+              selId = i[idx + 1].id;
               render();
             }
           }
         }
         if (e.key === "j" || e.key === "J") {
-          const items = getItems();
-          if (items.length) {
-            const idx = items.findIndex(t => t.id === selId);
-            if (idx < items.length - 1) {
-              selId = items[idx + 1].id;
+          const i = items();
+          if (i.length) {
+            const idx = i.findIndex(t => t.id === selId);
+            if (idx < i.length - 1) {
+              selId = i[idx + 1].id;
               render();
               if (document.getElementById("detail").classList.contains("on"))
                 openThread(selId);
@@ -2765,11 +3021,11 @@
           }
         }
         if (e.key === "k" || e.key === "K") {
-          const items = getItems();
-          if (items.length) {
-            const idx = items.findIndex(t => t.id === selId);
+          const i = items();
+          if (i.length) {
+            const idx = i.findIndex(t => t.id === selId);
             if (idx > 0) {
-              selId = items[idx - 1].id;
+              selId = i[idx - 1].id;
               render();
               if (document.getElementById("detail").classList.contains("on"))
                 openThread(selId);
@@ -2787,7 +3043,7 @@
           setMode(mode === "focus" ? "inbox" : "focus");
         }
         if (e.key === "/" && e.target.tagName !== "INPUT") {
-          document.getElementById("sSearch").focus();
+          document.getElementById("sIn").focus();
           e.preventDefault();
         }
       });
@@ -2800,8 +3056,48 @@
         } else goHome();
       });
 
+      // ── Mobile swipe ──
+      document.addEventListener(
+        "touchstart",
+        e => {
+          const row = e.target.closest(".thread-row");
+          if (!row || document.querySelector(".batch.show")) return;
+          const startX = e.touches[0].clientX;
+          const id = parseInt(row.dataset.id);
+          const t = ALL.find(x => x.id === id);
+          if (!t) return;
+          const onMove = ev => {
+            const dx = ev.touches[0].clientX - startX;
+            if (dx > 60) {
+              swipeState[id] = "right";
+              row.style.transform = "translateX(" + dx + "px)";
+              row.style.transition = "none";
+            } else if (dx < -60) {
+              swipeState[id] = "left";
+              row.style.transform = "translateX(" + dx + "px)";
+              row.style.transition = "none";
+            }
+          };
+          const onEnd = () => {
+            row.style.transition = "transform .2s var(--ease)";
+            row.style.transform = "translateX(0)";
+            if (swipeState[id] === "left") {
+              quickDone(id);
+            } else if (swipeState[id] === "right") {
+              quickSnooze(id);
+            }
+            delete swipeState[id];
+            document.removeEventListener("touchmove", onMove);
+            document.removeEventListener("touchend", onEnd);
+          };
+          document.addEventListener("touchmove", onMove, { passive: true });
+          document.addEventListener("touchend", onEnd);
+        },
+        { passive: true }
+      );
+
       // ── Init ──
-      if (!localStorage.getItem(WALK_KEY)) setTimeout(showWalk, 400);
+      if (!localStorage.getItem(WALK_KEY)) setTimeout(showWalk, 500);
       render();
     </script>
   </body>
